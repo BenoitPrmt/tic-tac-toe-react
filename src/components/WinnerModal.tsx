@@ -3,6 +3,7 @@ import {WinnerType} from "../types/Board.ts";
 import cross from "../assets/images/game/cross.svg";
 import circle from "../assets/images/game/circle.svg";
 import Button from "./Button.tsx";
+import {WINNER_COLORS} from "../constants/Colors.ts";
 
 type Props = {
     title: string;
@@ -14,12 +15,6 @@ type Props = {
 
 const WinnerModal = ({title, visible, winner, onClose, onRestart}: Props) => {
     const modalRef = useRef(null);
-
-    const winnerColors = {
-        X: "text-primary",
-        O: "text-secondary",
-        D: "text-light-grey",
-    };
 
     useEffect(() => {
         if (!modalRef.current) {
@@ -43,7 +38,7 @@ const WinnerModal = ({title, visible, winner, onClose, onRestart}: Props) => {
         <dialog ref={modalRef} id="my_modal_4" className="modal" onCancel={handleESC}>
             <div className="modal-box w-[100vw] max-w-5xl rounded-none bg-grey-dark flex items-center flex-col">
                 <p className="py-4 text-grey-light font-bold">{title.toUpperCase()}</p>
-                <h3 className={`font-bold flex flex-row text-grey-light text-3xl justify-center ${winnerColors[winner]}`}>
+                <h3 className={`font-bold flex flex-row text-grey-light text-3xl justify-center ${WINNER_COLORS[winner]}`}>
                     {["X", "O"].includes(winner) ?
                         <img src={winner === "X" ? cross : circle} alt={winner} className={"p-2 w-10 h-10 text-grey-light"}/>
                         : ""

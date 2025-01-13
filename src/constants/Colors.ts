@@ -10,3 +10,10 @@ export const COLOR_SHADOW = {
     greyLight: 'shadow-buttonGreyLight',
     grey: 'shadow-buttonGrey',
 }
+
+export const WINNER_COLORS = {
+    "": "", // Avoid types errors
+    X: "text-primary",
+    O: "text-secondary",
+    D: "text-light-grey",
+};
