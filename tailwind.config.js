@@ -30,7 +30,13 @@ export default {
         fontFamily: {
             'fredoka': ['Fredoka']
         },
-        extend: {},
+        extend: {
+            boxShadow: {
+                buttonSecondary: '0px 4px 0px 0px #CE8E14',
+                buttonGreyLight: '0px 4px 0px 0px #7D9AA7',
+                buttonGrey: '0px 7px 0px 0px #132C36',
+            }
+        },
     },
     plugins: [],
 }

@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react";
-import {PlayerType, BoardType} from "../../types/Board.ts";
+import {PlayerType, BoardType, WinnerType} from "../../types/Board.ts";
 import BoardComponent from "./Board.tsx";
 import PlayerTurn from "./PlayerTurn.tsx";
+import Modal from "../WinnerModal.tsx";
 
 const GameComponent = () => {
     const [board, setBoard] = useState<BoardType>([]);
     const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("X");
-    const [winner, setWinner] = useState<PlayerType>("");
+    const [winner, setWinner] = useState<WinnerType>("");
 
     useEffect(() => {
         const tempBoard: BoardType = [];
@@ -63,6 +64,17 @@ const GameComponent = () => {
         if (isWinningDiagB !== "") {
             setWinner(isWinningDiagB);
         }
+
+        if (checkIfBoardFull()) {
+            setWinner("D");
+        }
+    }
+
+    const checkIfBoardFull = (): boolean => {
+        return board
+            .flat()
+            .filter((cell: PlayerType) => cell === "")
+            .length === 0;
     }
 
     const handleCellClick = (coords: number[]) => {
@@ -87,6 +99,8 @@ const GameComponent = () => {
             <p className={"text-grey-light"}>{winner}</p>
 
             <BoardComponent board={board} handleCellClick={handleCellClick} currentPlayer={currentPlayer} />
+
+            <Modal title={"Victoire !"} visible={winner !== ""} winner={winner} />
         </>
     );
 };
