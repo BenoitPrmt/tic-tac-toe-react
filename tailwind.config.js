@@ -6,16 +6,29 @@ export default {
     ],
     theme: {
         colors: {
-            primary: "#36CDCA",
-            secondary: "#F6BC47",
-            shadowSecondary: "#CE8E14",
+            primary: {
+                DEFAULT: "#36CDCA",
+            },
+            secondary: {
+                DEFAULT: "#F6BC47",
+                shadow: "#CE8E14"
+            },
             grey: {
-                light: "#B6CAD3",
-                lightShadow: "#7D9AA7",
-                medium: "#284551",
-                mediumShadow: "#132C36",
-                dark: "#203741"
+                light: {
+                    DEFAULT: "#B6CAD3",
+                    shadow: "#7D9AA7"
+                },
+                medium: {
+                    DEFAULT: "#284551",
+                    shadow: "#132C36",
+                },
+                dark: {
+                    DEFAULT: "#203741"
+                }
             }
+        },
+        fontFamily: {
+            'fredoka': ['Fredoka']
         },
         extend: {},
     },
