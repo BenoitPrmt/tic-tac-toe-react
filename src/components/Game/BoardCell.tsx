@@ -5,16 +5,18 @@ import {useState} from "react";
 
 type Props = {
     boardCell: PlayerType;
-    onCellClick: () => void;
+    coords: number[];
+    onCellClick: (coords: number[]) => void;
     currentPlayer: PlayerType;
 }
 
-const BoardCell = ({ boardCell, onCellClick, currentPlayer }: Props) => {
+const BoardCell = ({ boardCell, coords, onCellClick, currentPlayer }: Props) => {
     const [cell, setCell] = useState<PlayerType>(boardCell)
 
     const handleClick = () => {
+        if (cell != "") return;
         setCell(currentPlayer);
-        onCellClick();
+        onCellClick(coords);
     }
 
     return (
