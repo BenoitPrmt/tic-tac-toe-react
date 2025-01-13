@@ -1,4 +1,4 @@
-import {ColorType} from "../../types/colors.ts";
+import {ColorType} from "../../types/Colors.ts";
 
 type Props = {
     color: ColorType;
