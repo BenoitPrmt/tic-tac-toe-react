@@ -6,6 +6,7 @@ import Input from "../components/Input.tsx";
 import Switch from "../components/Switch.tsx";
 import {useNavigate} from "react-router";
 import {useGame} from "../context/GameContext.tsx";
+import {usePersistance} from "../context/PersistanceContext.tsx";
 
 const HomePage = () => {
     const [isGameModeMulti, setGameModeMulti] = useState<boolean>(false);
@@ -13,6 +14,7 @@ const HomePage = () => {
     const navigate = useNavigate();
 
     const { playerOneUsername, setPlayerOneUsername, playerTwoUsername, setPlayerTwoUsername, setIsGameAgainstComputer, resetBoard } = useGame();
+    const { saveCurrentGame } = usePersistance();
 
     const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
@@ -30,6 +32,13 @@ const HomePage = () => {
         if(pOne === "" || pTwo === "") return;
 
         setIsGameAgainstComputer(!isGameModeMulti);
+
+        saveCurrentGame({
+            playerOne: pOne,
+            playerTwo: pTwo,
+            draws: 0,
+            againstComputer: !isGameModeMulti
+        });
 
         console.log(playerOneUsername, playerTwoUsername, isGameModeMulti);
         resetBoard(true);

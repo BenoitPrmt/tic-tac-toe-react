@@ -3,7 +3,7 @@ import GameComponent from "../components/Game/Game.tsx";
 import {useGame} from "../context/GameContext.tsx";
 
 const GamePage = () => {
-    const { playerOneUsername, playerTwoUsername, playerOneScore, playerTwoScore, draws } = useGame();
+    const { playerOneUsername, playerTwoUsername, draws, playerOneScore, playerTwoScore } = useGame();
 
     return (
         <div>
