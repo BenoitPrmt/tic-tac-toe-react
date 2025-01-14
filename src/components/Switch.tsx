@@ -24,14 +24,14 @@ const Switch = ({ handleChecked }: Props) => {
                 />
                 <span
                     className={`flex items-center space-x-[6px] rounded py-2 px-[18px] text-md font-bold uppercase ${
-                        !isChecked ? 'text-grey-light bg-grey-light-shadow' : 'text-grey-light-shadow'
+                        !isChecked ? 'text-grey-medium bg-grey-light-shadow' : 'text-grey-light-shadow'
                     }`}
                 >
                   Contre l'ordinateur
                 </span>
                 <span
                     className={`flex items-center space-x-[6px] rounded py-2 px-[18px] text-md font-bold uppercase ${
-                        isChecked ? 'text-grey-light bg-grey-light-shadow' : 'text-grey-light-shadow'
+                        isChecked ? 'text-grey-medium bg-grey-light-shadow' : 'text-grey-light-shadow'
                     }`}
                 >
                   Multijoueur local

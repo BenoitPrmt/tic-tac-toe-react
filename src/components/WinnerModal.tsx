@@ -4,16 +4,17 @@ import cross from "../assets/images/game/cross.svg";
 import circle from "../assets/images/game/circle.svg";
 import Button from "./Button.tsx";
 import {WINNER_COLORS} from "../constants/Colors.ts";
+import {useGame} from "../context/GameContext.tsx";
 
 type Props = {
     title: string;
     visible: boolean;
     winner: WinnerType;
     onClose?: () => void;
-    onRestart?: () => void;
 }
 
-const WinnerModal = ({title, visible, winner, onClose, onRestart}: Props) => {
+const WinnerModal = ({title, visible, winner, onClose}: Props) => {
+    const { resetBoard } = useGame();
     const modalRef = useRef(null);
 
     useEffect(() => {
@@ -27,10 +28,19 @@ const WinnerModal = ({title, visible, winner, onClose, onRestart}: Props) => {
         if (onClose) {
             onClose();
         }
+        if (!modalRef.current) {
+            return;
+        }
+        modalRef.current.close();
     }
 
     const handleESC = (event) => {
         event.preventDefault();
+        handleClose();
+    }
+
+    const handleRestart = () => {
+        resetBoard(false);
         handleClose();
     }
 
@@ -48,7 +58,7 @@ const WinnerModal = ({title, visible, winner, onClose, onRestart}: Props) => {
                 <div className="modal-action flex justify-center">
                     <form method="dialog" className="space-x-2">
                         <Button onClick={handleClose} color={"greyLight"}>Quitter</Button>
-                        <Button onClick={onRestart} color={"secondary"}>Nouvelle partie</Button>
+                        <Button onClick={handleRestart} color={"secondary"}>Nouvelle partie</Button>
                     </form>
                 </div>
             </div>

@@ -3,10 +3,19 @@ import { BoardType, PlayerType, WinnerType } from '../types/Board';
 
 interface GameContextType {
     board: BoardType;
+    resetBoard: (resetScores: boolean) => void;
     currentPlayer: PlayerType;
     winner: WinnerType;
     handleCellClick: (coords: number[]) => void;
     isComputerTurn: boolean;
+    playerOneUsername: string;
+    setPlayerOneUsername: (username: string) => void;
+    playerTwoUsername: string;
+    setPlayerTwoUsername: (username: string) => void;
+    playerOneScore: number;
+    playerTwoScore: number;
+    draws: number;
+    setIsGameAgainstComputer: (isAgainstComputer: boolean) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -16,9 +25,21 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("X");
     const [winner, setWinner] = useState<WinnerType>("");
     const [isComputerTurn, setIsComputerTurn] = useState(false);
-    const isGameAgainstComputer = true;
+    const [isGameAgainstComputer, setIsGameAgainstComputer] = useState<boolean>(true);
+
+    // TODO: localStorage
+    const [playerOneUsername, setPlayerOneUsername] = useState<string>("Joueur 1");
+    const [playerTwoUsername, setPlayerTwoUsername] = useState<string>("CPU");
+
+    const [playerOneScore, setPlayerOneScore] = useState<number>(0);
+    const [playerTwoScore, setPlayerTwoScore] = useState<number>(0);
+    const [draws, setDraws] = useState<number>(0);
 
     useEffect(() => {
+        initBoard()
+    }, []);
+
+    const initBoard = () => {
         const tempBoard: BoardType = [];
         for(let i: number = 0; i < 3; i++) {
             tempBoard[i] = [];
@@ -27,7 +48,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             }
         }
         setBoard(tempBoard);
-    }, []);
+    }
 
     const checkIfCellsAreWinning = useCallback((cells: PlayerType[]): PlayerType => {
         const [cellA, cellB, cellC] = cells;
@@ -109,6 +130,17 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         const gameWinner = checkVictory(newBoard);
         if (gameWinner) {
             setWinner(gameWinner);
+            switch (gameWinner) {
+                case "X":
+                    setPlayerOneScore((prevScore) => prevScore + 1);
+                    break;
+                case "O":
+                    setPlayerTwoScore((prevScore) => prevScore + 1);
+                    break;
+                case "D":
+                    setDraws((prevScore) => prevScore + 1);
+                    break;
+            }
         }
         setCurrentPlayer("X");
         setIsComputerTurn(false);
@@ -133,21 +165,54 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         const gameWinner = checkVictory(newBoard);
         if (gameWinner) {
             setWinner(gameWinner);
+            switch (gameWinner) {
+                case "X":
+                    setPlayerOneScore((prevScore) => prevScore + 1);
+                    break;
+                case "O":
+                    setPlayerTwoScore((prevScore) => prevScore + 1);
+                    break;
+                case "D":
+                    setDraws((prevScore) => prevScore + 1);
+                    break;
+            }
             return;
         }
 
-        setCurrentPlayer("O");
+        setCurrentPlayer((prevPlayer) => prevPlayer === "O" ? "X" : "O");
         if (isGameAgainstComputer) {
             setIsComputerTurn(true);
         }
     }, [winner, isComputerTurn, makeMove, currentPlayer, board, checkVictory, isGameAgainstComputer]);
+
+    const resetBoard = (resetScores: boolean) => {
+        initBoard();
+        setCurrentPlayer("X");
+        setWinner("");
+        setIsComputerTurn(false);
+
+        if (resetScores) {
+            setPlayerOneScore(0);
+            setPlayerTwoScore(0);
+            setDraws(0);
+        }
+    }
 
     const value = {
         board,
         currentPlayer,
         winner,
         handleCellClick,
-        isComputerTurn
+        isComputerTurn,
+        playerOneUsername,
+        setPlayerOneUsername,
+        playerTwoUsername,
+        setPlayerTwoUsername,
+        playerOneScore,
+        playerTwoScore,
+        draws,
+        resetBoard,
+        setIsGameAgainstComputer
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

@@ -5,13 +5,14 @@ import Button from "../components/Button.tsx";
 import Input from "../components/Input.tsx";
 import Switch from "../components/Switch.tsx";
 import {useNavigate} from "react-router";
+import {useGame} from "../context/GameContext.tsx";
 
 const HomePage = () => {
     const [isGameModeMulti, setGameModeMulti] = useState<boolean>(false);
     const [isSubmitted, setSubmitted] = useState<boolean>(false);
-    const [playerOne, setPlayerOne] = useState<string>("");
-    const [playerTwo, setPlayerTwo] = useState<string>("");
     const navigate = useNavigate();
+
+    const { playerOneUsername, setPlayerOneUsername, playerTwoUsername, setPlayerTwoUsername, setIsGameAgainstComputer, resetBoard } = useGame();
 
     const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
@@ -22,13 +23,16 @@ const HomePage = () => {
             player_two: { value: string };
         };
         const pOne = target.player_one.value;
-        setPlayerOne(pOne);
+        setPlayerOneUsername(pOne);
         const pTwo = isGameModeMulti ? target.player_two.value : "CPU";
-        setPlayerTwo(pTwo);
+        setPlayerTwoUsername(pTwo);
 
         if(pOne === "" || pTwo === "") return;
 
-        console.log(playerOne, playerTwo);
+        setIsGameAgainstComputer(!isGameModeMulti);
+
+        console.log(playerOneUsername, playerTwoUsername, isGameModeMulti);
+        resetBoard(true);
 
         navigate("/game");
     }
@@ -53,8 +57,8 @@ const HomePage = () => {
 
                 <form method="post" onSubmit={handleSubmit} className={"bg-grey-medium-shadow p-5 rounded-lg w-1/2"}>
                     <div className={"flex flex-col justify-center space-y-4"}>
-                        <Input name={'player_one'} placeholder={"Joueur 1"} hasError={isSubmitted && playerOne === ""} />
-                        {isGameModeMulti && (<Input name={'player_two'} placeholder={"Joueur 2"} hasError={isGameModeMulti && isSubmitted && playerTwo === ""} />)}
+                        <Input name={'player_one'} placeholder={"Joueur 1"} hasError={isSubmitted && playerOneUsername === ""} />
+                        {isGameModeMulti && (<Input name={'player_two'} placeholder={"Joueur 2"} hasError={isGameModeMulti && isSubmitted && playerTwoUsername === ""} />)}
                         <Button color={"secondary"} type="submit">Lancer la partie</Button>
                     </div>
                 </form>
