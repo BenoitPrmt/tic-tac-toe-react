@@ -1,5 +1,6 @@
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { BoardType, PlayerType, WinnerType } from '../types/Board';
+import {usePersistance} from "./PersistanceContext.tsx";
 
 interface GameContextType {
     board: BoardType;
@@ -21,6 +22,8 @@ interface GameContextType {
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
+    const { saveBoard, getSavedBoard, getPlayerScore, savePlayerScore } = usePersistance();
+
     const [board, setBoard] = useState<BoardType>([]);
     const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("X");
     const [winner, setWinner] = useState<WinnerType>("");
@@ -31,12 +34,17 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     const [playerOneUsername, setPlayerOneUsername] = useState<string>("Joueur 1");
     const [playerTwoUsername, setPlayerTwoUsername] = useState<string>("CPU");
 
-    const [playerOneScore, setPlayerOneScore] = useState<number>(0);
-    const [playerTwoScore, setPlayerTwoScore] = useState<number>(0);
+    const [playerOneScore, setPlayerOneScore] = useState<number>(getPlayerScore(playerOneUsername));
+    const [playerTwoScore, setPlayerTwoScore] = useState<number>(getPlayerScore(playerTwoUsername));
     const [draws, setDraws] = useState<number>(0);
 
     useEffect(() => {
-        initBoard()
+        const savedBoard: BoardType = getSavedBoard();
+        if (savedBoard.length === 0) {
+            initBoard()
+        } else {
+            setBoard(savedBoard);
+        }
     }, []);
 
     const initBoard = () => {
@@ -119,6 +127,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         return newBoard;
     }, []);
 
+    // TODO: Regrouper ça avec cell click
     const computerTurn = useCallback((currentBoard: BoardType) => {
         const position = getRandomEmptyCell(currentBoard);
         if (!position) return;
@@ -127,14 +136,17 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         if (!newBoard) return;
 
         setBoard(newBoard);
+        saveBoard(newBoard);
         const gameWinner = checkVictory(newBoard);
         if (gameWinner) {
             setWinner(gameWinner);
             switch (gameWinner) {
                 case "X":
+                    savePlayerScore(playerOneUsername, playerOneScore + 1);
                     setPlayerOneScore((prevScore) => prevScore + 1);
                     break;
                 case "O":
+                    savePlayerScore(playerTwoUsername, playerTwoScore + 1);
                     setPlayerTwoScore((prevScore) => prevScore + 1);
                     break;
                 case "D":
@@ -145,6 +157,10 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setCurrentPlayer("X");
         setIsComputerTurn(false);
     }, [getRandomEmptyCell, makeMove, checkVictory]);
+
+    useEffect(() => {
+        saveBoard([]);
+    }, [winner]);
 
     useEffect(() => {
         if (isComputerTurn && !winner) {
@@ -162,14 +178,17 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         if (!newBoard) return;
 
         setBoard(newBoard);
+        saveBoard(newBoard);
         const gameWinner = checkVictory(newBoard);
         if (gameWinner) {
             setWinner(gameWinner);
             switch (gameWinner) {
                 case "X":
+                    savePlayerScore(playerOneUsername, playerOneScore + 1);
                     setPlayerOneScore((prevScore) => prevScore + 1);
                     break;
                 case "O":
+                    savePlayerScore(playerTwoUsername, playerTwoScore + 1);
                     setPlayerTwoScore((prevScore) => prevScore + 1);
                     break;
                 case "D":
