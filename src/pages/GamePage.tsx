@@ -8,9 +8,9 @@ const GamePage = () => {
 
             <div className="flex justify-center mt-5">
                 <div className="grid grid-cols-3 gap-4">
-                    <ScoreCell color={"primary"} title={"Joueur 1"} score={10}/>
-                    <ScoreCell color={"greyLight"} title={"Egalité"} score={3}/>
-                    <ScoreCell color={"secondary"} title={"Joueur 2"} score={5}/>
+                    <ScoreCell color={"primary"} title={"X"} score={0}/>
+                    <ScoreCell color={"greyLight"} title={"Egalité"} score={0}/>
+                    <ScoreCell color={"secondary"} title={"O"} score={0}/>
                 </div>
             </div>
         </div>

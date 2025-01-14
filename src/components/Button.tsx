@@ -4,13 +4,16 @@ import {COLOR_BACKGROUND, COLOR_SHADOW} from "../constants/Colors.ts";
 
 type Props = {
     color: ColorType
-    onClick: (() => void) | undefined;
+    onClick?: (() => void) | undefined;
     children: ReactNode;
+    type?: "button" | "submit" | "reset" | undefined;
 }
 
-const Button = ({ color, onClick, children }: Props) => {
+const Button = ({ color, onClick, children, type = 'button' }: Props) => {
     return (
-        <button className={`font-extrabold uppercase rounded-lg px-4 py-2 shad ${COLOR_BACKGROUND[color]} ${COLOR_SHADOW[color]}`} onClick={onClick}>{children}</button>
+        <button type={type} className={`font-extrabold uppercase rounded-lg px-4 py-2 shad ${COLOR_BACKGROUND[color]} ${COLOR_SHADOW[color]}`} onClick={onClick}>
+            {children}
+        </button>
     );
 };
 

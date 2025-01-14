@@ -1,29 +1,25 @@
-import BoardCell from "./BoardCell.tsx";
-import {Fragment, ReactNode} from "react";
-import {BoardType, PlayerType} from "../../types/Board.ts";
+import { Fragment } from "react";
+import BoardCell from "./BoardCell";
+import { PlayerType } from "../../types/Board";
+import { useGame } from "../../context/GameContext";
 
-type Props = {
-    board: BoardType;
-    handleCellClick: (coords: number[]) => void;
-    currentPlayer: PlayerType;
-}
+const BoardComponent = () => {
+    const { board } = useGame();
 
-const BoardComponent = ({ board, handleCellClick, currentPlayer }: Props) => {
-    console.log("board", board)
     return (
         <div className="flex justify-center py-4">
             <div className="grid grid-cols-3 gap-4">
-                {board && (
-                    board.map((line: PlayerType[], index: number): ReactNode => {
-                        return (
-                            <Fragment key={index}>
-                                {line.map((cell: PlayerType, idx: number) => <BoardCell boardCell={cell} coords={[index, idx]} key={idx}
-                                                                                        onCellClick={handleCellClick}
-                                                                                        currentPlayer={currentPlayer}/>)}
-                            </Fragment>
-                        )
-                    })
-                )}
+                {board.map((line: PlayerType[], index: number) => (
+                    <Fragment key={index}>
+                        {line.map((cell: PlayerType, idx: number) => (
+                            <BoardCell
+                                boardCell={cell}
+                                coords={[index, idx]}
+                                key={idx}
+                            />
+                        ))}
+                    </Fragment>
+                ))}
             </div>
         </div>
     );
