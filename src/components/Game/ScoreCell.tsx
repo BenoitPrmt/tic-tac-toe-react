@@ -1,4 +1,5 @@
 import {ColorType} from "../../types/Colors.ts";
+import {COLOR_BACKGROUND} from "../../constants/Colors.ts";
 
 type Props = {
     color: ColorType;
@@ -7,16 +8,10 @@ type Props = {
 }
 
 const ScoreCell = ({ color, title, score }: Props) => {
-    const colorVariants = {
-        primary: 'bg-primary',
-        secondary: 'bg-secondary',
-        greyLight: 'bg-grey-light',
-    }
-
     return (
-        <div className={`${colorVariants[color]} rounded-lg h-auto w-[10vh] flex items-center flex-col`}>
-            <p>{title}</p>
-            <p className={"text-3xl font-semibold"}>{score}</p>
+        <div className={`${COLOR_BACKGROUND[color]} rounded-lg h-auto w-[10vh] flex items-center flex-col`}>
+            <p className={"text-grey-dark"}>{title}</p>
+            <p className={"text-3xl font-semibold text-grey-dark"}>{score}</p>
         </div>
     );
 };
