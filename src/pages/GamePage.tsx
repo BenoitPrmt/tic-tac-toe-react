@@ -5,6 +5,8 @@ import {useGame} from "../context/GameContext.tsx";
 const GamePage = () => {
     const { playerOneUsername, playerTwoUsername, draws, playerOneScore, playerTwoScore } = useGame();
 
+    console.log(playerOneScore, playerTwoScore, playerOneUsername, playerTwoUsername)
+
     return (
         <div>
             <GameComponent />

@@ -9,6 +9,7 @@ interface PersistanceContextType {
     getPlayerScore: (username: string) => number;
     saveCurrentGame: (currentGame: CurrentGame) => void;
     getCurrentGame: () => CurrentGame|null;
+    getCurrentGamePlayerScore: (player: "one" | "two") => number;
 }
 
 const PersistanceContext = createContext<PersistanceContextType | undefined>(undefined);
@@ -47,7 +48,6 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const saveCurrentGame = (currentGame: CurrentGame) => {
-        console.log("saveCurrentGame", currentGame);
         localStorage.setItem("current", JSON.stringify(currentGame));
     }
 
@@ -59,13 +59,24 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         return null;
     }
 
+    const getCurrentGamePlayerScore = (player: "one" | "two"): number => {
+        const currentGame = localStorage.getItem("current");
+        if (currentGame) {
+            const currentGameData: CurrentGame = JSON.parse(currentGame);
+            return player === "one" ? (currentGameData.playerOneScore ?? 0) : (currentGameData.playerTwoScore ?? 0);
+        } else {
+            return 0;
+        }
+    }
+
     const value = {
         saveBoard,
         getSavedBoard,
         savePlayerScore,
         getPlayerScore,
         saveCurrentGame,
-        getCurrentGame
+        getCurrentGame,
+        getCurrentGamePlayerScore
     };
 
     return <PersistanceContext.Provider value={value}>{children}</PersistanceContext.Provider>;

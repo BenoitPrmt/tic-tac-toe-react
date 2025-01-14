@@ -12,7 +12,7 @@ const HomePage = () => {
     const [isSubmitted, setSubmitted] = useState<boolean>(false);
     const navigate = useNavigate();
 
-    const { setPlayerOneUsername, setPlayerTwoUsername, setIsGameAgainstComputer, resetBoard } = useGame();
+    const { setPlayerOneUsername, setPlayerTwoUsername, setIsGameAgainstComputer, resetBoard, setPlayerOneScore, setPlayerTwoScore } = useGame();
     const { saveCurrentGame } = usePersistance();
 
     const handleSubmit = (e: SyntheticEvent) => {
@@ -27,10 +27,13 @@ const HomePage = () => {
         setPOneUsername(target.player_one.value);
         if(target.player_one.value === "" && !isGameModeMulti) return;
 
+        // TODO: Mettre tout ceci dans une fonction retournée par le context
         const pOne = target.player_one.value !== "" ? target.player_one.value : "Joueur 1";
         setPlayerOneUsername(pOne);
+        setPlayerOneScore(0);
         const pTwo = isGameModeMulti ? (target.player_two.value !== "" ? target.player_two.value : "Joueur 2") : "CPU";
         setPlayerTwoUsername(pTwo);
+        setPlayerTwoScore(0);
 
         setIsGameAgainstComputer(!isGameModeMulti);
 

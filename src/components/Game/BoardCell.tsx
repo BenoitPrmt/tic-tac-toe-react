@@ -9,7 +9,7 @@ type Props = {
 }
 
 const BoardCell = ({ boardCell, coords }: Props) => {
-    const { handleCellClick } = useGame();
+    const { handleCellClick, currentPlayer, isComputerTurn } = useGame();
 
     return (
         <div
@@ -18,6 +18,7 @@ const BoardCell = ({ boardCell, coords }: Props) => {
         >
             {boardCell === "X" && <img src={cross} alt={boardCell} className={"p-5"}/>}
             {boardCell === "O" && <img src={circle} alt={boardCell} className={"p-5"}/>}
+            {!isComputerTurn && boardCell === "" && <img src={currentPlayer === "X" ? cross : circle} alt={boardCell} className={"p-5 opacity-0 hover:opacity-25"}/>}
         </div>
     );
 };
