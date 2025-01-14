@@ -26,7 +26,6 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const savePlayerScore = (username: string, score: number) => {
-        console.log(username, score)
         const scores = localStorage.getItem("scores");
         if (scores) {
             const scoresData = JSON.parse(scores);
@@ -41,8 +40,6 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         const scores = localStorage.getItem("scores");
         if (scores) {
             const scoresData = JSON.parse(scores);
-            console.log(scoresData, username);
-            console.log("scoresData[username] ?? 0", scoresData[username] ?? 0);
             return scoresData[username] ?? 0;
         } else {
             return 0;
@@ -50,6 +47,7 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const saveCurrentGame = (currentGame: CurrentGame) => {
+        console.log("saveCurrentGame", currentGame);
         localStorage.setItem("current", JSON.stringify(currentGame));
     }
 

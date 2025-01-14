@@ -8,10 +8,11 @@ import {usePersistance} from "../context/PersistanceContext.tsx";
 
 const HomePage = () => {
     const [isGameModeMulti, setGameModeMulti] = useState<boolean>(false);
+    const [pOneUsername, setPOneUsername] = useState<string>("");
     const [isSubmitted, setSubmitted] = useState<boolean>(false);
     const navigate = useNavigate();
 
-    const { playerOneUsername, setPlayerOneUsername, playerTwoUsername, setPlayerTwoUsername, setIsGameAgainstComputer, resetBoard } = useGame();
+    const { setPlayerOneUsername, setPlayerTwoUsername, setIsGameAgainstComputer, resetBoard } = useGame();
     const { saveCurrentGame } = usePersistance();
 
     const handleSubmit = (e: SyntheticEvent) => {
@@ -22,23 +23,27 @@ const HomePage = () => {
             player_one: { value: string };
             player_two: { value: string };
         };
-        const pOne = target.player_one.value;
-        setPlayerOneUsername(pOne);
-        const pTwo = isGameModeMulti ? target.player_two.value : "CPU";
-        setPlayerTwoUsername(pTwo);
 
-        if(pOne === "" || pTwo === "") return;
+        setPOneUsername(target.player_one.value);
+        if(target.player_one.value === "" && !isGameModeMulti) return;
+
+        const pOne = target.player_one.value !== "" ? target.player_one.value : "Joueur 1";
+        setPlayerOneUsername(pOne);
+        const pTwo = isGameModeMulti ? (target.player_two.value !== "" ? target.player_two.value : "Joueur 2") : "CPU";
+        setPlayerTwoUsername(pTwo);
 
         setIsGameAgainstComputer(!isGameModeMulti);
 
         saveCurrentGame({
             playerOne: pOne,
+            playerOneScore: 0,
             playerTwo: pTwo,
+            playerTwoScore: 0,
             draws: 0,
-            againstComputer: !isGameModeMulti
+            againstComputer: !isGameModeMulti,
+            isXTurn: true
         });
 
-        console.log(playerOneUsername, playerTwoUsername, isGameModeMulti);
         resetBoard(true);
 
         navigate("/game");
@@ -61,8 +66,8 @@ const HomePage = () => {
 
                 <form method="post" onSubmit={handleSubmit} className={"bg-grey-medium-shadow p-5 rounded-lg w-1/2"}>
                     <div className={"flex flex-col justify-center space-y-4"}>
-                        <Input name={'player_one'} placeholder={"Joueur 1"} hasError={isSubmitted && playerOneUsername === ""} />
-                        {isGameModeMulti && (<Input name={'player_two'} placeholder={"Joueur 2"} hasError={isGameModeMulti && isSubmitted && playerTwoUsername === ""} />)}
+                        <Input name={'player_one'} placeholder={"Joueur 1"} hasError={!isGameModeMulti && isSubmitted && pOneUsername === ""} />
+                        {isGameModeMulti && (<Input name={'player_two'} placeholder={"Joueur 2"} />)}
                         <Button color={"secondary"} type="submit">Lancer la partie</Button>
                     </div>
                 </form>

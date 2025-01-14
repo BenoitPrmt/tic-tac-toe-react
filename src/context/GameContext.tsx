@@ -1,6 +1,7 @@
 import {createContext, ReactNode, useCallback, useContext, useEffect, useState} from 'react';
 import {BoardType, PlayerType, WinnerType} from '../types/Board';
 import {usePersistance} from "./PersistanceContext.tsx";
+import {CurrentGame} from "../types/Game.ts";
 
 interface GameContextType {
     board: BoardType;
@@ -34,10 +35,10 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     const [playerTwoUsername, setPlayerTwoUsername] = useState<string>("CPU");
 
     const [playerOneScore, setPlayerOneScore] = useState<number>(() => {
-        return getPlayerScore(playerOneUsername);
+        return isGameAgainstComputer ? getPlayerScore(playerOneUsername) : 0;
     });
     const [playerTwoScore, setPlayerTwoScore] = useState<number>(() => {
-        return getPlayerScore(playerTwoUsername);
+        return isGameAgainstComputer ? getPlayerScore(playerTwoUsername) : 0;
     });
     const [draws, setDraws] = useState<number>(0);
 
@@ -45,9 +46,12 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         const currentGame = getCurrentGame();
         if (currentGame) {
             setPlayerOneUsername(currentGame.playerOne);
+            setPlayerOneScore(currentGame.playerOneScore);
             setPlayerTwoUsername(currentGame.playerTwo);
+            setPlayerTwoScore(currentGame.playerTwoScore);
             setDraws(currentGame.draws);
             setIsGameAgainstComputer(currentGame.againstComputer);
+            setCurrentPlayer(currentGame.isXTurn ? "X" : "O");
         }
 
         const savedBoard: BoardType = getSavedBoard();
@@ -59,8 +63,10 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     useEffect(() => {
-        setPlayerOneScore(getPlayerScore(playerOneUsername));
-        setPlayerTwoScore(getPlayerScore(playerTwoUsername));
+        if (isGameAgainstComputer) {
+            setPlayerOneScore(getPlayerScore(playerOneUsername));
+            setPlayerTwoScore(getPlayerScore(playerTwoUsername));
+        }
     }, [playerOneUsername, playerTwoUsername]);
 
     const initBoard = () => {
@@ -181,6 +187,17 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         const gameWinner = checkVictory(newBoard);
         if (gameWinner) {
             handleVictory(gameWinner);
+        } else {
+            console.log("--- CURRENT PLAYER ", currentPlayer);
+            saveCurrentGame({
+                playerOne: playerOneUsername,
+                playerOneScore: playerOneScore,
+                playerTwo: playerTwoUsername,
+                playerTwoScore: playerTwoScore,
+                draws: draws,
+                againstComputer: isGameAgainstComputer,
+                isXTurn: !(currentPlayer === "X")
+            });
         }
 
         setCurrentPlayer((prevPlayer) => prevPlayer === "O" ? "X" : "O");
@@ -192,25 +209,35 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     const handleVictory = (gameWinner: WinnerType) => {
         setWinner(gameWinner);
         saveBoard([]);
+
+        const currentGame: CurrentGame = {
+            playerOne: playerOneUsername,
+            playerOneScore: playerOneScore,
+            playerTwo: playerTwoUsername,
+            playerTwoScore: playerTwoScore,
+            draws: draws,
+            againstComputer: isGameAgainstComputer,
+            isXTurn: currentPlayer === "X"
+        };
+
         switch (gameWinner) {
             case "X":
-                savePlayerScore(playerOneUsername, playerOneScore + 1);
+                currentGame.playerOneScore += 1;
+                if (isGameAgainstComputer) savePlayerScore(playerOneUsername, playerOneScore + 1);
                 setPlayerOneScore((prevScore) => prevScore + 1);
                 break;
             case "O":
-                savePlayerScore(playerTwoUsername, playerTwoScore + 1);
+                currentGame.playerTwoScore += 1;
+                if (isGameAgainstComputer) savePlayerScore(playerTwoUsername, playerTwoScore + 1);
                 setPlayerTwoScore((prevScore) => prevScore + 1);
                 break;
             case "D":
-                saveCurrentGame({
-                    playerOne: playerOneUsername,
-                    playerTwo: playerTwoUsername,
-                    draws: draws + 1,
-                    againstComputer: isGameAgainstComputer
-                });
+                currentGame.draws += 1;
                 setDraws((prevScore) => prevScore + 1);
                 break;
         }
+        console.log("CURRENT GAME", currentGame);
+        saveCurrentGame(currentGame);
         return;
     }
 
@@ -221,7 +248,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setIsComputerTurn(false);
         saveBoard([]);
 
-        if (resetScores) {
+        if (resetScores && !isGameAgainstComputer) {
             setPlayerOneScore(0);
             setPlayerTwoScore(0);
             setDraws(0);
