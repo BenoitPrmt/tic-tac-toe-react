@@ -1,5 +1,3 @@
-import circle from '../assets/images/game/circle.svg'
-import cross from '../assets/images/game/cross.svg'
 import {SyntheticEvent, useState} from "react";
 import Button from "../components/Button.tsx";
 import Input from "../components/Input.tsx";
@@ -55,9 +53,6 @@ const HomePage = () => {
             <h1 className="text-3xl font-semibold text-grey-light">
                 TicTacToe
             </h1>
-
-            <img src={circle} alt={"Circle"} className={"w-10 h-10"}/>
-            <img src={cross} alt={"Cross"} className={"w-10 h-10"}/>
 
             <div className="space-y-5 flex flex-col justify-center items-center">
                 <div className="">

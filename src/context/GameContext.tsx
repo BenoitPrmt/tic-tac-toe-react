@@ -219,6 +219,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setCurrentPlayer("X");
         setWinner("");
         setIsComputerTurn(false);
+        saveBoard([]);
 
         if (resetScores) {
             setPlayerOneScore(0);
