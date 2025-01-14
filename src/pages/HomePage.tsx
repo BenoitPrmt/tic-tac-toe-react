@@ -1,11 +1,10 @@
-import circle from '../assets/images/game/circle.svg'
-import cross from '../assets/images/game/cross.svg'
 import {SyntheticEvent, useState} from "react";
 import Button from "../components/Button.tsx";
 import Input from "../components/Input.tsx";
 import Switch from "../components/Switch.tsx";
 import {useNavigate} from "react-router";
 import {useGame} from "../context/GameContext.tsx";
+import {usePersistance} from "../context/PersistanceContext.tsx";
 
 const HomePage = () => {
     const [isGameModeMulti, setGameModeMulti] = useState<boolean>(false);
@@ -13,6 +12,7 @@ const HomePage = () => {
     const navigate = useNavigate();
 
     const { playerOneUsername, setPlayerOneUsername, playerTwoUsername, setPlayerTwoUsername, setIsGameAgainstComputer, resetBoard } = useGame();
+    const { saveCurrentGame } = usePersistance();
 
     const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
@@ -31,6 +31,13 @@ const HomePage = () => {
 
         setIsGameAgainstComputer(!isGameModeMulti);
 
+        saveCurrentGame({
+            playerOne: pOne,
+            playerTwo: pTwo,
+            draws: 0,
+            againstComputer: !isGameModeMulti
+        });
+
         console.log(playerOneUsername, playerTwoUsername, isGameModeMulti);
         resetBoard(true);
 
@@ -46,9 +53,6 @@ const HomePage = () => {
             <h1 className="text-3xl font-semibold text-grey-light">
                 TicTacToe
             </h1>
-
-            <img src={circle} alt={"Circle"} className={"w-10 h-10"}/>
-            <img src={cross} alt={"Cross"} className={"w-10 h-10"}/>
 
             <div className="space-y-5 flex flex-col justify-center items-center">
                 <div className="">
