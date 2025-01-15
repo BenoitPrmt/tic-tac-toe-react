@@ -46,7 +46,6 @@ const HomePage = () => {
 
         setIsGameAgainstComputer(!isGameModeMulti);
         setIsGame3Shots(isGameMode3Shots);
-
         resetBoard(true);
 
         saveCurrentGame({
