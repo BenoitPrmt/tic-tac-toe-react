@@ -1,6 +1,7 @@
 import {createContext, ReactNode, useCallback, useContext, useEffect, useState} from 'react';
 import {BoardType, PlayerType, WinnerType} from '../types/Board';
 import {usePersistance} from "./PersistanceContext.tsx";
+import {CurrentGame} from "../types/Game.ts";
 
 interface GameContextType {
     board: BoardType;
@@ -11,10 +12,12 @@ interface GameContextType {
     isComputerTurn: boolean;
     playerOneUsername: string;
     setPlayerOneUsername: (username: string) => void;
+    playerOneScore: number;
+    setPlayerOneScore: (score: number) => void;
     playerTwoUsername: string;
     setPlayerTwoUsername: (username: string) => void;
-    playerOneScore: number;
     playerTwoScore: number;
+    setPlayerTwoScore: (score: number) => void;
     draws: number;
     setIsGameAgainstComputer: (isAgainstComputer: boolean) => void;
 }
@@ -24,32 +27,32 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 export const GameProvider = ({ children }: { children: ReactNode }) => {
     const { saveBoard, getSavedBoard, savePlayerScore, getCurrentGame, saveCurrentGame, getPlayerScore } = usePersistance();
 
+    const currentGame = getCurrentGame();
+
     const [board, setBoard] = useState<BoardType>([]);
-    const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("X");
+    const [currentPlayer, setCurrentPlayer] = useState<PlayerType>(currentGame?.isXTurn ? "X" : "O");
     const [winner, setWinner] = useState<WinnerType>("");
     const [isComputerTurn, setIsComputerTurn] = useState<boolean>(false);
-    const [isGameAgainstComputer, setIsGameAgainstComputer] = useState<boolean>(true);
+    const [isGameAgainstComputer, setIsGameAgainstComputer] = useState<boolean>(currentGame?.againstComputer ?? true);
 
-    const [playerOneUsername, setPlayerOneUsername] = useState<string>("Joueur 1");
-    const [playerTwoUsername, setPlayerTwoUsername] = useState<string>("CPU");
+    const [playerOneUsername, setPlayerOneUsername] = useState<string>(currentGame?.playerOne ?? "Joueur 1");
+    const [playerTwoUsername, setPlayerTwoUsername] = useState<string>(currentGame?.playerTwo ?? "CPU");
 
-    const [playerOneScore, setPlayerOneScore] = useState<number>(() => {
-        return getPlayerScore(playerOneUsername);
-    });
-    const [playerTwoScore, setPlayerTwoScore] = useState<number>(() => {
-        return getPlayerScore(playerTwoUsername);
-    });
-    const [draws, setDraws] = useState<number>(0);
+    const [playerOneScore, setPlayerOneScore] = useState<number>(
+        currentGame ?
+            currentGame.playerOneScore :
+            (isGameAgainstComputer ? getPlayerScore(playerOneUsername) : 0)
+    );
+
+    const [playerTwoScore, setPlayerTwoScore] = useState<number>(
+        currentGame ?
+            currentGame.playerTwoScore :
+            (isGameAgainstComputer ? getPlayerScore(playerTwoUsername) : 0)
+    );
+
+    const [draws, setDraws] = useState<number>(currentGame?.draws ?? 0);
 
     useEffect(() => {
-        const currentGame = getCurrentGame();
-        if (currentGame) {
-            setPlayerOneUsername(currentGame.playerOne);
-            setPlayerTwoUsername(currentGame.playerTwo);
-            setDraws(currentGame.draws);
-            setIsGameAgainstComputer(currentGame.againstComputer);
-        }
-
         const savedBoard: BoardType = getSavedBoard();
         if (savedBoard.length === 0) {
             initBoard();
@@ -59,9 +62,11 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     useEffect(() => {
-        setPlayerOneScore(getPlayerScore(playerOneUsername));
-        setPlayerTwoScore(getPlayerScore(playerTwoUsername));
-    }, [playerOneUsername, playerTwoUsername]);
+        if (isGameAgainstComputer) {
+            setPlayerOneScore(getPlayerScore(playerOneUsername));
+            setPlayerTwoScore(getPlayerScore(playerTwoUsername));
+        }
+    }, [playerOneUsername, playerTwoUsername, isGameAgainstComputer]);
 
     const initBoard = () => {
         const tempBoard: BoardType = [];
@@ -162,7 +167,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     }, [getRandomEmptyCell, makeMove, checkVictory]);
 
     useEffect(() => {
-        if (isComputerTurn && !winner) {
+        if ((isComputerTurn || (isGameAgainstComputer && currentPlayer === "O")) && !winner) {
             const timer = setTimeout(() => {
                 computerTurn(board);
             }, 1000);
@@ -181,6 +186,16 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         const gameWinner = checkVictory(newBoard);
         if (gameWinner) {
             handleVictory(gameWinner);
+        } else {
+            saveCurrentGame({
+                playerOne: playerOneUsername,
+                playerOneScore: playerOneScore,
+                playerTwo: playerTwoUsername,
+                playerTwoScore: playerTwoScore,
+                draws: draws,
+                againstComputer: isGameAgainstComputer,
+                isXTurn: !(currentPlayer === "X")
+            });
         }
 
         setCurrentPlayer((prevPlayer) => prevPlayer === "O" ? "X" : "O");
@@ -192,25 +207,34 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     const handleVictory = (gameWinner: WinnerType) => {
         setWinner(gameWinner);
         saveBoard([]);
+
+        const currentGame: CurrentGame = {
+            playerOne: playerOneUsername,
+            playerOneScore: playerOneScore,
+            playerTwo: playerTwoUsername,
+            playerTwoScore: playerTwoScore,
+            draws: draws,
+            againstComputer: isGameAgainstComputer,
+            isXTurn: currentPlayer === "X"
+        };
+
         switch (gameWinner) {
             case "X":
-                savePlayerScore(playerOneUsername, playerOneScore + 1);
+                currentGame.playerOneScore += 1;
+                if (isGameAgainstComputer) savePlayerScore(playerOneUsername, playerOneScore + 1);
                 setPlayerOneScore((prevScore) => prevScore + 1);
                 break;
             case "O":
-                savePlayerScore(playerTwoUsername, playerTwoScore + 1);
+                currentGame.playerTwoScore += 1;
+                if (isGameAgainstComputer) savePlayerScore(playerTwoUsername, playerTwoScore + 1);
                 setPlayerTwoScore((prevScore) => prevScore + 1);
                 break;
             case "D":
-                saveCurrentGame({
-                    playerOne: playerOneUsername,
-                    playerTwo: playerTwoUsername,
-                    draws: draws + 1,
-                    againstComputer: isGameAgainstComputer
-                });
+                currentGame.draws += 1;
                 setDraws((prevScore) => prevScore + 1);
                 break;
         }
+        saveCurrentGame(currentGame);
         return;
     }
 
@@ -221,10 +245,19 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setIsComputerTurn(false);
         saveBoard([]);
 
-        if (resetScores) {
+        if (resetScores && !isGameAgainstComputer) {
             setPlayerOneScore(0);
             setPlayerTwoScore(0);
             setDraws(0);
+            saveCurrentGame({
+                playerOne: playerOneUsername,
+                playerOneScore: 0,
+                playerTwo: playerTwoUsername,
+                playerTwoScore: 0,
+                draws: 0,
+                againstComputer: isGameAgainstComputer,
+                isXTurn: true
+            })
         }
     }
 
@@ -236,10 +269,12 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         isComputerTurn,
         playerOneUsername,
         setPlayerOneUsername,
+        playerOneScore,
+        setPlayerOneScore,
         playerTwoUsername,
         setPlayerTwoUsername,
-        playerOneScore,
         playerTwoScore,
+        setPlayerTwoScore,
         draws,
         resetBoard,
         setIsGameAgainstComputer

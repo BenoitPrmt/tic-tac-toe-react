@@ -5,6 +5,7 @@ import circle from "../assets/images/game/circle.svg";
 import Button from "./Button.tsx";
 import {WINNER_COLORS} from "../constants/Colors.ts";
 import {useGame} from "../context/GameContext.tsx";
+import {useNavigate} from "react-router";
 
 type Props = {
     title: string;
@@ -13,9 +14,11 @@ type Props = {
     onClose?: () => void;
 }
 
+// TODO: useGame
 const WinnerModal = ({title, visible, winner, onClose}: Props) => {
     const { resetBoard } = useGame();
     const modalRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!modalRef.current) {
@@ -32,15 +35,16 @@ const WinnerModal = ({title, visible, winner, onClose}: Props) => {
             return;
         }
         modalRef.current.close();
+        resetBoard(false);
     }
 
     const handleESC = (event) => {
         event.preventDefault();
         handleClose();
+        navigate("/");
     }
 
     const handleRestart = () => {
-        resetBoard(false);
         handleClose();
     }
 
