@@ -25,33 +25,34 @@ interface GameContextType {
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-    const { saveBoard, getSavedBoard, savePlayerScore, getCurrentGame, saveCurrentGame, getPlayerScore, getCurrentGamePlayerScore } = usePersistance();
+    const { saveBoard, getSavedBoard, savePlayerScore, getCurrentGame, saveCurrentGame, getPlayerScore } = usePersistance();
+
+    const currentGame = getCurrentGame();
 
     const [board, setBoard] = useState<BoardType>([]);
-    const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("X");
+    const [currentPlayer, setCurrentPlayer] = useState<PlayerType>(currentGame?.isXTurn ? "X" : "O");
     const [winner, setWinner] = useState<WinnerType>("");
     const [isComputerTurn, setIsComputerTurn] = useState<boolean>(false);
-    const [isGameAgainstComputer, setIsGameAgainstComputer] = useState<boolean>(true);
+    const [isGameAgainstComputer, setIsGameAgainstComputer] = useState<boolean>(currentGame?.againstComputer ?? true);
 
-    const [playerOneUsername, setPlayerOneUsername] = useState<string>("Joueur 1");
-    const [playerTwoUsername, setPlayerTwoUsername] = useState<string>("CPU");
+    const [playerOneUsername, setPlayerOneUsername] = useState<string>(currentGame?.playerOne ?? "Joueur 1");
+    const [playerTwoUsername, setPlayerTwoUsername] = useState<string>(currentGame?.playerTwo ?? "CPU");
 
-    const [playerOneScore, setPlayerOneScore] = useState<number>(isGameAgainstComputer ? getPlayerScore(playerOneUsername) : getCurrentGamePlayerScore("one"));
-    const [playerTwoScore, setPlayerTwoScore] = useState<number>(isGameAgainstComputer ? getPlayerScore(playerTwoUsername) : getCurrentGamePlayerScore("two"));
-    const [draws, setDraws] = useState<number>(0);
+    const [playerOneScore, setPlayerOneScore] = useState<number>(
+        currentGame ?
+            currentGame.playerOneScore :
+            (isGameAgainstComputer ? getPlayerScore(playerOneUsername) : 0)
+    );
+
+    const [playerTwoScore, setPlayerTwoScore] = useState<number>(
+        currentGame ?
+            currentGame.playerTwoScore :
+            (isGameAgainstComputer ? getPlayerScore(playerTwoUsername) : 0)
+    );
+
+    const [draws, setDraws] = useState<number>(currentGame?.draws ?? 0);
 
     useEffect(() => {
-        const currentGame = getCurrentGame();
-        if (currentGame) {
-            setPlayerOneUsername(currentGame.playerOne);
-            setPlayerOneScore(currentGame.playerOneScore);
-            setPlayerTwoUsername(currentGame.playerTwo);
-            setPlayerTwoScore(currentGame.playerTwoScore);
-            setDraws(currentGame.draws);
-            setIsGameAgainstComputer(currentGame.againstComputer);
-            setCurrentPlayer(currentGame.isXTurn ? "X" : "O");
-        }
-
         const savedBoard: BoardType = getSavedBoard();
         if (savedBoard.length === 0) {
             initBoard();
@@ -65,7 +66,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             setPlayerOneScore(getPlayerScore(playerOneUsername));
             setPlayerTwoScore(getPlayerScore(playerTwoUsername));
         }
-    }, [playerOneUsername, playerTwoUsername]);
+    }, [playerOneUsername, playerTwoUsername, isGameAgainstComputer]);
 
     const initBoard = () => {
         const tempBoard: BoardType = [];
@@ -248,6 +249,15 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             setPlayerOneScore(0);
             setPlayerTwoScore(0);
             setDraws(0);
+            saveCurrentGame({
+                playerOne: playerOneUsername,
+                playerOneScore: 0,
+                playerTwo: playerTwoUsername,
+                playerTwoScore: 0,
+                draws: 0,
+                againstComputer: isGameAgainstComputer,
+                isXTurn: true
+            })
         }
     }
 
