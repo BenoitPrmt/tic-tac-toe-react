@@ -20,6 +20,7 @@ interface GameContextType {
     setPlayerTwoScore: (score: number) => void;
     draws: number;
     setIsGameAgainstComputer: (isAgainstComputer: boolean) => void;
+    setIsGame3Shots: (is3Shots: boolean) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -32,8 +33,10 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     const [board, setBoard] = useState<BoardType>([]);
     const [currentPlayer, setCurrentPlayer] = useState<PlayerType>(currentGame?.isXTurn ? "X" : "O");
     const [winner, setWinner] = useState<WinnerType>("");
-    const [isComputerTurn, setIsComputerTurn] = useState<boolean>(false);
     const [isGameAgainstComputer, setIsGameAgainstComputer] = useState<boolean>(currentGame?.againstComputer ?? true);
+    const [isGame3Shots, setIsGame3Shots] = useState<boolean>(currentGame?.isGame3Shots ?? true);
+    const [isComputerTurn, setIsComputerTurn] = useState<boolean>(isGameAgainstComputer ? !currentGame?.isXTurn : false);
+    console.log("ISCOMPUTERTURN", isComputerTurn)
 
     const [playerOneUsername, setPlayerOneUsername] = useState<string>(currentGame?.playerOne ?? "Joueur 1");
     const [playerTwoUsername, setPlayerTwoUsername] = useState<string>(currentGame?.playerTwo ?? "CPU");
@@ -140,6 +143,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const makeMove = useCallback((coords: number[], player: PlayerType, currentBoard: BoardType) => {
+        console.log(isGame3Shots);
         const [row, col] = coords;
         if (currentBoard[row][col] !== "") return null;
 
@@ -162,12 +166,31 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         if (gameWinner) {
             handleVictory(gameWinner);
         }
+
+        saveCurrentGame({
+            playerOne: playerOneUsername,
+            playerOneScore: playerOneScore,
+            playerTwo: playerTwoUsername,
+            playerTwoScore: playerTwoScore,
+            draws: draws,
+            againstComputer: isGameAgainstComputer,
+            isGame3Shots: isGame3Shots,
+            isXTurn: true
+        });
+
         setCurrentPlayer("X");
         setIsComputerTurn(false);
     }, [getRandomEmptyCell, makeMove, checkVictory]);
 
     useEffect(() => {
-        if ((isComputerTurn || (isGameAgainstComputer && currentPlayer === "O")) && !winner) {
+        console.log("-------------");
+        console.log("isComputerTurn", isComputerTurn);
+        console.log("isGameAgainstComputer && currentPlayer === \"O\")", isGameAgainstComputer && currentPlayer === "O");
+        console.log("!winner", !winner);
+        console.log("-------------")
+        if ((isComputerTurn && isGameAgainstComputer && currentPlayer === "O") && !winner) {
+            console.log("Ok le bot joue");
+            console.log("-------------")
             const timer = setTimeout(() => {
                 computerTurn(board);
             }, 1000);
@@ -194,6 +217,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
                 playerTwoScore: playerTwoScore,
                 draws: draws,
                 againstComputer: isGameAgainstComputer,
+                isGame3Shots: isGame3Shots,
                 isXTurn: !(currentPlayer === "X")
             });
         }
@@ -215,6 +239,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             playerTwoScore: playerTwoScore,
             draws: draws,
             againstComputer: isGameAgainstComputer,
+            isGame3Shots: isGame3Shots,
             isXTurn: currentPlayer === "X"
         };
 
@@ -249,15 +274,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             setPlayerOneScore(0);
             setPlayerTwoScore(0);
             setDraws(0);
-            saveCurrentGame({
-                playerOne: playerOneUsername,
-                playerOneScore: 0,
-                playerTwo: playerTwoUsername,
-                playerTwoScore: 0,
-                draws: 0,
-                againstComputer: isGameAgainstComputer,
-                isXTurn: true
-            })
+            saveCurrentGame(null);
         }
     }
 
@@ -277,7 +294,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setPlayerTwoScore,
         draws,
         resetBoard,
-        setIsGameAgainstComputer
+        setIsGameAgainstComputer,
+        setIsGame3Shots
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

@@ -5,5 +5,6 @@ export type CurrentGame = {
     playerTwoScore: number;
     draws: number;
     againstComputer: boolean;
+    isGame3Shots: boolean;
     isXTurn: boolean;
 }
