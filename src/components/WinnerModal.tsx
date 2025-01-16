@@ -15,7 +15,7 @@ type Props = {
 }
 
 const WinnerModal = ({title, visible, winner, onClose}: Props) => {
-    const { resetBoard } = useGame();
+    const { resetBoard, resetAndSave } = useGame();
     const modalRef = useRef(null);
     const navigate = useNavigate();
 
@@ -38,7 +38,7 @@ const WinnerModal = ({title, visible, winner, onClose}: Props) => {
     }
 
     const handleQuitGame = () => {
-        resetBoard(true);
+        resetAndSave();
         handleClose();
         navigate("/");
     }

@@ -1,17 +1,17 @@
-import {PlayerScoreType} from "../../types/Player.ts";
+import {PlayerLeaderboardType} from "../../types/Player.ts";
 import {GAMEMODES} from "../../constants/Gamemode.ts";
 import {ColorType} from "../../types/Colors.ts";
 import Tile from "../Tile.tsx";
+import {formatDate} from "../../utils/formatDate.ts";
 
 type Props = {
-    item: PlayerScoreType,
-    rank: number
+    item: PlayerLeaderboardType;
 }
 
-const ScoreboardLine = ({ item, rank }: Props) => {
+const ScoreboardLine = ({ item }: Props) => {
     let scoreboardColor: ColorType;
 
-    switch (rank) {
+    switch (item.rank) {
         case 1:
             scoreboardColor = "secondary"
             break;
@@ -29,12 +29,12 @@ const ScoreboardLine = ({ item, rank }: Props) => {
     return (
         <tr className={"text-grey-light"}>
             <td className={"p-4"}>
-                <Tile color={scoreboardColor}>{rank}</Tile>
+                <Tile color={scoreboardColor}>{item.rank}</Tile>
             </td>
             <td className={"p-4"}>{item.username}</td>
             <td className={"p-4"}>{item.score}</td>
             <td className={"p-4"}>{GAMEMODES[item.gamemode]}</td>
-            <td className={"p-4 hidden md:block"}>{item.timestamp.toLocaleString()}</td>
+            <td className={"p-4 hidden md:block"}>{formatDate(item.timestamp)}</td>
         </tr>
     );
 };

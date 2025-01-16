@@ -5,6 +5,7 @@ import Switch from "../components/Switch.tsx";
 import {useNavigate} from "react-router";
 import {useGame} from "../context/GameContext.tsx";
 import {usePersistance} from "../context/PersistanceContext.tsx";
+import {PlayerScoreType} from "../types/Player.ts";
 
 const HomePage = () => {
     const [isGameMode3Shots, setGameMode3Shots] = useState<boolean>(false);
@@ -22,7 +23,7 @@ const HomePage = () => {
         setIsGameAgainstComputer,
         setIsGame3Shots
     } = useGame();
-    const {saveCurrentGame, getPlayerScore} = usePersistance();
+    const {saveCurrentGame, savePlayerScore, getCurrentPlayer, saveCurrentPlayer} = usePersistance();
 
     const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
@@ -39,20 +40,33 @@ const HomePage = () => {
         // TODO: Mettre tout ceci dans une fonction retournée par le context
         const pOne = target.player_one.value !== "" ? target.player_one.value : "Joueur 1";
         setPlayerOneUsername(pOne);
-        setPlayerOneScore(isGameModeMulti ? 0 : getPlayerScore(pOne));
+        setPlayerOneScore(0);
         const pTwo = isGameModeMulti ? (target.player_two.value !== "" ? target.player_two.value : "Joueur 2") : "CPU";
         setPlayerTwoUsername(pTwo);
-        setPlayerTwoScore(isGameModeMulti ? 0 : getPlayerScore(pTwo));
+        setPlayerTwoScore(0);
 
         setIsGameAgainstComputer(!isGameModeMulti);
         setIsGame3Shots(isGameMode3Shots);
         resetBoard(true);
 
+        const currentPlayer: PlayerScoreType | null = getCurrentPlayer()
+        if (currentPlayer) {
+            savePlayerScore(currentPlayer);
+            if (!isGameModeMulti) {
+                saveCurrentPlayer({
+                    username: pOne,
+                    gamemode: isGameMode3Shots ? "threeShots" : "normal",
+                    score: 0,
+                    timestamp: new Date()
+                });
+            }
+        }
+
         saveCurrentGame({
             playerOne: pOne,
-            playerOneScore: isGameModeMulti ? 0 : getPlayerScore(pOne),
+            playerOneScore: 0,
             playerTwo: pTwo,
-            playerTwoScore: isGameModeMulti ? 0 : getPlayerScore(pTwo),
+            playerTwoScore: 0,
             draws: 0,
             againstComputer: !isGameModeMulti,
             isGame3Shots: isGameMode3Shots,
