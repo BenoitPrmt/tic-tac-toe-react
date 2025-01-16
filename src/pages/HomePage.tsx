@@ -73,19 +73,15 @@ const HomePage = () => {
 
     return (
         <div>
-            <h1 className="text-3xl font-semibold text-grey-light">
-                TicTacToe
-            </h1>
-
             <div className="space-y-5 flex flex-col justify-center items-center">
                 <div className="">
                     <Switch handleChecked={handleGameTypeChange} choiceOne={"Mode classique"}
-                            choiceTwo={"3 coups"}/>
+                            choiceTwo={"Mode en 3 coups"}/>
                 </div>
 
                 <div className="">
                     <Switch handleChecked={handleGameModeChange} choiceOne={"Contre l'ordinateur"}
-                            choiceTwo={"Multijoueur local"}/>
+                            choiceTwo={"Multijoueur"}/>
                 </div>
                 <div className="max-sm:mx-6 w-full">
                 <form method="post" onSubmit={handleSubmit}

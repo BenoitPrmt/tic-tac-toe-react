@@ -11,7 +11,7 @@ type Props = {
 
 const Button = ({ color, onClick, children, type = 'button' }: Props) => {
     return (
-        <button type={type} className={`font-extrabold uppercase rounded-lg px-4 py-2 ${COLOR_BACKGROUND[color]} ${COLOR_SHADOW[color]}`} onClick={onClick}>
+        <button type={type} className={`text-grey-medium font-extrabold uppercase rounded-lg px-4 py-2 ${COLOR_BACKGROUND[color]} ${COLOR_SHADOW[color]}`} onClick={onClick}>
             {children}
         </button>
     );

@@ -21,6 +21,7 @@ interface GameContextType {
     draws: number;
     setIsGameAgainstComputer: (isAgainstComputer: boolean) => void;
     setIsGame3Shots: (is3Shots: boolean) => void;
+    hasGameLaunched: () => boolean;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -288,20 +289,25 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const resetBoard = (resetScores: boolean) => {
-        initBoard();
+        if (resetScores && !isGameAgainstComputer) {
+            setPlayerOneScore(0);
+            setPlayerTwoScore(0);
+            setDraws(0);
+            saveCurrentGame(null);
+        } else {
+            initBoard();
+        }
+
         setCurrentPlayer("X");
         setWinner("");
         setIsComputerTurn(false);
         saveBoard([]);
         saveLastShots([]);
         setLastShots([]);
+    }
 
-        if (resetScores && !isGameAgainstComputer) {
-            setPlayerOneScore(0);
-            setPlayerTwoScore(0);
-            setDraws(0);
-            saveCurrentGame(null);
-        }
+    const hasGameLaunched = (): boolean => {
+        return board.length === 3 && currentGame != null;
     }
 
     const value = {
@@ -321,7 +327,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         draws,
         resetBoard,
         setIsGameAgainstComputer,
-        setIsGame3Shots
+        setIsGame3Shots,
+        hasGameLaunched
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
