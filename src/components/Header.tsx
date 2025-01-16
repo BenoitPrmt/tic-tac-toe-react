@@ -18,12 +18,12 @@ const Header = () => {
                     {hasGameLaunched() && (
                         <Button color={"greyLight"}>
                             <Link to={"/game"}>
-                                Jeu
+                                Partie en cours
                             </Link>
                         </Button>
                     )}
                     <Button color={"greyLight"}>
-                        <Link to={"/ranking"}>
+                        <Link to={"/scoreboard"}>
                             Classement
                         </Link>
                     </Button>

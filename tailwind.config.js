@@ -9,6 +9,7 @@ export default {
             primary: {
                 DEFAULT: "#36CDCA",
                 hover: "#2ebebc",
+                shadow: "#21a2a1",
             },
             secondary: {
                 DEFAULT: "#F6BC47",
@@ -40,6 +41,7 @@ export default {
         },
         extend: {
             boxShadow: {
+                buttonPrimary: '0px 4px 0px 0px #21a2a1',
                 buttonSecondary: '0px 4px 0px 0px #CE8E14',
                 buttonGreyLight: '0px 4px 0px 0px #7D9AA7',
                 buttonGrey: '0px 4px 0px 0px #132C36',
