@@ -14,7 +14,6 @@ type Props = {
     onClose?: () => void;
 }
 
-// TODO: useGame
 const WinnerModal = ({title, visible, winner, onClose}: Props) => {
     const { resetBoard } = useGame();
     const modalRef = useRef(null);
@@ -35,16 +34,22 @@ const WinnerModal = ({title, visible, winner, onClose}: Props) => {
             return;
         }
         modalRef.current.close();
-        resetBoard(false);
+
+    }
+
+    const handleQuitGame = () => {
+        resetBoard(true);
+        handleClose();
+        navigate("/");
     }
 
     const handleESC = (event) => {
         event.preventDefault();
         handleClose();
-        navigate("/");
     }
 
     const handleRestart = () => {
+        resetBoard(false);
         handleClose();
     }
 
@@ -61,7 +66,7 @@ const WinnerModal = ({title, visible, winner, onClose}: Props) => {
                 </h3>
                 <div className="modal-action flex justify-center">
                     <form method="dialog" className="space-x-2">
-                        <Button onClick={handleClose} color={"greyLight"}>Quitter</Button>
+                        <Button onClick={handleQuitGame} color={"greyLight"}>Quitter</Button>
                         <Button onClick={handleRestart} color={"secondary"}>Nouvelle partie</Button>
                     </form>
                 </div>
