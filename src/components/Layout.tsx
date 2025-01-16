@@ -6,8 +6,8 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
     return (
-        <div className="bg-grey-dark h-[100vh]">
-            <div className={"container mx-auto"}>
+        <div className="bg-grey-dark">
+            <div className={"container mx-auto flex flex-col h-screen justify-between"}>
                 {children}
             </div>
         </div>
