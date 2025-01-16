@@ -7,7 +7,7 @@ import {RotateCwIcon} from "lucide-react";
 import Logo from "../Logo.tsx";
 
 const GameComponent = () => {
-    const { winner, resetBoard } = useGame();
+    const { winner, resetAndSave } = useGame();
 
     return (
         <>
@@ -15,7 +15,7 @@ const GameComponent = () => {
                 <Logo />
                 <PlayerTurn />
                 <Button color={"greyLight"}>
-                    <RotateCwIcon strokeWidth={3} onClick={() => resetBoard(true)} />
+                    <RotateCwIcon strokeWidth={3} onClick={() => resetAndSave()} />
                 </Button>
             </div>
 

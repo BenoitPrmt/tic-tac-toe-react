@@ -2,10 +2,12 @@ import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {BoardType, PlayerCellType, PlayerType, WinnerData, WinnerType} from '../types/Board';
 import {usePersistance} from "./PersistanceContext.tsx";
 import {CurrentGame, Shot} from "../types/Game.ts";
+import {PlayerScoreType} from "../types/Player.ts";
 
 interface GameContextType {
     board: BoardType;
     resetBoard: (resetScores: boolean) => void;
+    resetAndSave: () => void;
     currentPlayer: PlayerType;
     winner: WinnerType;
     handleCellClick: (coords: number[]) => void;
@@ -27,7 +29,7 @@ interface GameContextType {
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-    const { saveBoard, getSavedBoard, savePlayerScore, getCurrentGame, saveCurrentGame, getPlayerScore, saveLastShots, getLastShots } = usePersistance();
+    const { saveBoard, getSavedBoard, savePlayerScore, getCurrentGame, saveCurrentGame, saveLastShots, getLastShots, saveCurrentPlayer, getCurrentPlayer } = usePersistance();
 
     const currentGame = getCurrentGame();
     const lastShotsData: Shot[] | null = getLastShots();
@@ -47,14 +49,12 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 
     const [playerOneScore, setPlayerOneScore] = useState<number>(
         currentGame ?
-            currentGame.playerOneScore :
-            (isGameAgainstComputer ? getPlayerScore(playerOneUsername) : 0)
+            currentGame.playerOneScore : 0
     );
 
     const [playerTwoScore, setPlayerTwoScore] = useState<number>(
         currentGame ?
-            currentGame.playerTwoScore :
-            (isGameAgainstComputer ? getPlayerScore(playerTwoUsername) : 0)
+            currentGame.playerTwoScore : 0
     );
 
     const [draws, setDraws] = useState<number>(currentGame?.draws ?? 0);
@@ -67,13 +67,6 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             setBoard(savedBoard);
         }
     }, []);
-
-    useEffect(() => {
-        if (isGameAgainstComputer) {
-            setPlayerOneScore(getPlayerScore(playerOneUsername));
-            setPlayerTwoScore(getPlayerScore(playerTwoUsername));
-        }
-    }, [playerOneUsername, playerTwoUsername, isGameAgainstComputer]);
 
     const initBoard = () => {
         const tempBoard: BoardType = [];
@@ -88,8 +81,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 
     const checkIfCellsAreWinning = (cells: PlayerCellType[]): PlayerType => {
         const [cellA, cellB, cellC]: PlayerCellType[] = cells;
-        if (cellA !== "" && (cellA === cellB) && (cellB === cellC)) {
-            return cellA as PlayerType;
+        if (cellA[cellA.length-1] !== "" && (cellA[cellA.length-1] === cellB[cellB.length-1]) && (cellB[cellB.length-1] === cellC[cellC.length-1])) {
+            return cellA[cellA.length-1] as PlayerType;
         }
         return "";
     };
@@ -323,12 +316,31 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         switch (winnerData.winner) {
             case "X":
                 currentGame.playerOneScore += 1;
-                if (isGameAgainstComputer) savePlayerScore(playerOneUsername, playerOneScore + 1);
+                if (isGameAgainstComputer) saveCurrentPlayer({
+                    username: playerOneUsername,
+                    score: playerOneScore + 1,
+                    timestamp: new Date(),
+                    gamemode: isGame3Shots ? "threeShots" : "normal"
+                });
                 setPlayerOneScore((prevScore) => prevScore + 1);
                 break;
             case "O":
                 currentGame.playerTwoScore += 1;
-                if (isGameAgainstComputer) savePlayerScore(playerTwoUsername, playerTwoScore + 1);
+                if (isGameAgainstComputer) {
+                    savePlayerScore({
+                        username: playerOneUsername,
+                        score: playerOneScore,
+                        timestamp: new Date(),
+                        gamemode: isGame3Shots ? "threeShots" : "normal"
+                    });
+                    saveCurrentPlayer({
+                        username: playerOneUsername,
+                        gamemode: isGame3Shots ? "threeShots" : "normal",
+                        score: 0,
+                        timestamp: new Date()
+                    })
+                }
+                setPlayerOneScore(0);
                 setPlayerTwoScore((prevScore) => prevScore + 1);
                 break;
             case "D":
@@ -341,6 +353,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const resetBoard = (resetScores: boolean) => {
+
         if (resetScores && !isGameAgainstComputer) {
             setPlayerOneScore(0);
             setPlayerTwoScore(0);
@@ -358,8 +371,40 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setLastShots([]);
     }
 
+    const resetAndSave = () => {
+        if (isGameAgainstComputer) {
+            const currentPlayer: PlayerScoreType | null = getCurrentPlayer()
+            if (currentPlayer) {
+                savePlayerScore(currentPlayer);
+                saveCurrentPlayer(null);
+            }
+            setIsComputerTurn(false);
+        }
+        setPlayerOneScore(0);
+        setPlayerTwoScore(0);
+        setDraws(0);
+
+        saveCurrentGame({
+            playerOne: playerOneUsername,
+            playerOneScore: 0,
+            playerTwo: playerTwoUsername,
+            playerTwoScore: 0,
+            draws: 0,
+            againstComputer: isGameAgainstComputer,
+            isGame3Shots: isGame3Shots,
+            isXTurn: true
+        });
+
+        setCurrentPlayer("X");
+        setWinner("");
+        initBoard();
+        saveBoard([]);
+        saveLastShots([]);
+        setLastShots([]);
+    }
+
     const hasGameLaunched = (): boolean => {
-        return board.length === 3 && currentGame != null;
+        return board.flat().filter((cell) => cell === "").length !== 9 && currentGame != null;
     }
 
     const value = {
@@ -378,6 +423,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setPlayerTwoScore,
         draws,
         resetBoard,
+        resetAndSave,
         setIsGameAgainstComputer,
         setIsGame3Shots,
         hasGameLaunched

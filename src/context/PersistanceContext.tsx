@@ -1,18 +1,20 @@
-import { createContext, useContext, ReactNode } from 'react';
+import {createContext, ReactNode, useContext} from 'react';
 import {BoardType} from '../types/Board';
 import {CurrentGame, Shot} from "../types/Game.ts";
+import {PlayerLeaderboardType, PlayerScoreType} from "../types/Player.ts";
 
 interface PersistanceContextType {
     saveBoard: (board: BoardType) => void;
     getSavedBoard: () => BoardType;
-    savePlayerScore: (username: string, score: number) => void;
-    getPlayerScore: (username: string) => number;
+    savePlayerScore: (playerScore: PlayerScoreType) => void;
     saveCurrentGame: (currentGame: CurrentGame | null) => void;
-    getCurrentGame: () => CurrentGame|null;
-    getCurrentGamePlayerScore: (player: "one" | "two") => number;
+    getCurrentGame: () => CurrentGame | null;
+    saveCurrentPlayer: (currentPlayer: PlayerScoreType | null) => void;
+    getCurrentPlayer: () => PlayerScoreType | null;
     saveLastShots: (shots: Shot[]) => void;
     getLastShots: () => Shot[] | null;
     getLastShotsOfPlayer: (player: "X" | "O") => Shot[];
+    getLeaderboard: () => PlayerLeaderboardType[];
 }
 
 const PersistanceContext = createContext<PersistanceContextType | undefined>(undefined);
@@ -29,24 +31,14 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         return JSON.parse(localStorage.getItem('board') ?? "[]");
     }
 
-    const savePlayerScore = (username: string, score: number) => {
+    const savePlayerScore = (playerScore: PlayerScoreType) => {
         const scores = localStorage.getItem("scores");
         if (scores) {
-            const scoresData = JSON.parse(scores);
-            scoresData[username] = score;
+            const scoresData: PlayerScoreType[] = JSON.parse(scores);
+            scoresData.push(playerScore);
             localStorage.setItem("scores", JSON.stringify(scoresData));
         } else {
-            localStorage.setItem("scores", `{"${username}": ${score}}`)
-        }
-    }
-
-    const getPlayerScore = (username: string): number => {
-        const scores = localStorage.getItem("scores");
-        if (scores) {
-            const scoresData = JSON.parse(scores);
-            return scoresData[username] ?? 0;
-        } else {
-            return 0;
+            localStorage.setItem("scores", JSON.stringify([playerScore]));
         }
     }
 
@@ -66,14 +58,20 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         return null;
     }
 
-    const getCurrentGamePlayerScore = (player: "one" | "two"): number => {
-        const currentGame = localStorage.getItem("current");
-        if (currentGame) {
-            const currentGameData: CurrentGame = JSON.parse(currentGame);
-            return player === "one" ? (currentGameData.playerOneScore ?? 0) : (currentGameData.playerTwoScore ?? 0);
+    const saveCurrentPlayer = (currentPlayer: PlayerScoreType | null) => {
+        if (!currentPlayer) {
+            localStorage.removeItem("currentPlayer");
         } else {
-            return 0;
+            localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer));
         }
+    }
+
+    const getCurrentPlayer = (): PlayerScoreType | null => {
+        const currentPlayer = localStorage.getItem("currentPlayer");
+        if (currentPlayer) {
+            return JSON.parse(currentPlayer)
+        }
+        return null;
     }
 
     const saveLastShots = (shots: Shot[]): void => {
@@ -97,17 +95,37 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
+    const getLeaderboard = (): PlayerLeaderboardType[] => {
+        const scores = localStorage.getItem("scores");
+        if (scores) {
+            const sortedData: PlayerLeaderboardType[] = JSON.parse(scores)
+                .sort((a: PlayerScoreType, b: PlayerScoreType) => b.score - a.score)
+                .slice(0, 10)
+                .map((item: PlayerScoreType, index: number) => ({ rank: index+1, ...item }));
+
+            for (let i = 1; i < sortedData.length; i++) {
+                if (sortedData[i-1].score === sortedData[i].score) {
+                    sortedData[i].rank = sortedData[i-1].rank
+                }
+            }
+
+            return sortedData;
+        }
+        return [];
+    }
+
     const value = {
         saveBoard,
         getSavedBoard,
         savePlayerScore,
-        getPlayerScore,
         saveCurrentGame,
         getCurrentGame,
-        getCurrentGamePlayerScore,
+        getCurrentPlayer,
+        saveCurrentPlayer,
         saveLastShots,
         getLastShots,
-        getLastShotsOfPlayer
+        getLastShotsOfPlayer,
+        getLeaderboard
     };
 
     return <PersistanceContext.Provider value={value}>{children}</PersistanceContext.Provider>;

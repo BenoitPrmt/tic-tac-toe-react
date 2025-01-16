@@ -1,1 +1,1 @@
-export type ColorType = "primary" | "secondary" | "greyLight"
+export type ColorType = "primary" | "secondary" | "greyLight" | "dark";
