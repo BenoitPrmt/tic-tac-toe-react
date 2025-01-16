@@ -1,6 +1,6 @@
 import {ColorType} from "../types/Colors.ts";
 import {ReactNode} from "react";
-import {COLOR_BACKGROUND, COLOR_SHADOW} from "../constants/Colors.ts";
+import {COLOR_BACKGROUND, COLOR_HOVER, COLOR_SHADOW} from "../constants/Colors.ts";
 
 type Props = {
     color: ColorType
@@ -11,7 +11,7 @@ type Props = {
 
 const Button = ({ color, onClick, children, type = 'button' }: Props) => {
     return (
-        <button type={type} className={`text-grey-medium font-extrabold uppercase rounded-lg px-4 py-2 ${COLOR_BACKGROUND[color]} ${COLOR_SHADOW[color]}`} onClick={onClick}>
+        <button type={type} className={`text-grey-medium font-extrabold uppercase rounded-lg active:translate-y-1 active:shadow-none px-4 py-2 ${COLOR_BACKGROUND[color]} ${COLOR_HOVER[color]} ${COLOR_SHADOW[color]}`} onClick={onClick}>
             {children}
         </button>
     );

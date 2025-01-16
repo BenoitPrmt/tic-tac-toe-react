@@ -1,12 +1,10 @@
-import cross from "../../assets/images/game/cross.svg";
-import circle from "../../assets/images/game/circle.svg";
-import { PlayerType } from "../../types/Board.ts";
+import {PlayerCellType} from "../../types/Board.ts";
 import { useGame } from "../../context/GameContext";
 import Circle from "../Images/Circle.tsx";
 import Cross from "../Images/Cross.tsx";
 
 type Props = {
-    boardCell: PlayerType;
+    boardCell: PlayerCellType;
     coords: number[];
 }
 
@@ -15,12 +13,14 @@ const BoardCell = ({ boardCell, coords }: Props) => {
 
     return (
         <div
-            className={"bg-grey-medium rounded-lg h-[10vh] w-[10vh] shadow-cellGreyShadow"}
+            className={`rounded-lg h-[10vh] w-[10vh] hover:translate-y-0.5 shadow-cellGreyShadow ${boardCell.startsWith("W") ? (boardCell[boardCell.length - 1] === "X" ? "bg-primary" : "bg-secondary") : "bg-grey-medium"}`}
             onClick={() => handleCellClick(coords)}
         >
-            {boardCell === "X" && <Cross className={"p-5"}/>}
-            {boardCell === "O" && <Circle className={"p-5"} />}
-            {!isComputerTurn && boardCell === "" && <img src={currentPlayer === "X" ? cross : circle} alt={boardCell} className={"p-5 opacity-0 hover:opacity-25"}/>}
+            {boardCell[boardCell.length - 1] === "X" &&
+                <Cross className={`p-5 ${boardCell.startsWith("N") ? "animate-pulse" : ""}`} color={boardCell.startsWith("W") ? "greyDark" : "primary"}/>}
+            {boardCell[boardCell.length - 1] === "O" &&
+                <Circle className={`p-5 ${boardCell.startsWith("N") ? "animate-pulse" : ""}`} color={boardCell.startsWith("W") ? "greyDark" : "secondary"}/>}
+            {!isComputerTurn && boardCell === "" && (currentPlayer === "X" ? <Cross className={"p-5 opacity-0 hover:opacity-25"}/> : <Circle className={"p-5 opacity-0 hover:opacity-25"}/>)}
         </div>
     );
 };

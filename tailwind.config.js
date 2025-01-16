@@ -8,14 +8,17 @@ export default {
         colors: {
             primary: {
                 DEFAULT: "#36CDCA",
+                hover: "#2ebebc",
             },
             secondary: {
                 DEFAULT: "#F6BC47",
+                hover: "#e1a52d",
                 shadow: "#CE8E14"
             },
             grey: {
                 light: {
                     DEFAULT: "#B6CAD3",
+                    hover: "#9fb1b9",
                     shadow: "#7D9AA7"
                 },
                 medium: {
