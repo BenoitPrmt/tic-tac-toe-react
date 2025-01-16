@@ -13,7 +13,7 @@ const BoardCell = ({ boardCell, coords }: Props) => {
 
     return (
         <div
-            className={`rounded-lg h-[10vh] w-[10vh] shadow-cellGreyShadow ${boardCell.startsWith("W") ? (boardCell[boardCell.length - 1] === "X" ? "bg-primary" : "bg-secondary") : "bg-grey-medium"}`}
+            className={`rounded-lg h-[10vh] w-[10vh] hover:translate-y-0.5 shadow-cellGreyShadow ${boardCell.startsWith("W") ? (boardCell[boardCell.length - 1] === "X" ? "bg-primary" : "bg-secondary") : "bg-grey-medium"}`}
             onClick={() => handleCellClick(coords)}
         >
             {boardCell[boardCell.length - 1] === "X" &&

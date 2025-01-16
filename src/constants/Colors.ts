@@ -4,6 +4,12 @@ export const COLOR_BACKGROUND = {
     greyLight: 'bg-grey-light',
 }
 
+export const COLOR_HOVER = {
+    primary: 'hover:bg-primary-hover',
+    secondary: 'hover:bg-secondary-hover',
+    greyLight: 'hover:bg-grey-light-hover',
+}
+
 export const COLOR_SHADOW = {
     primary: '',
     secondary: 'shadow-buttonSecondary',
