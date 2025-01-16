@@ -3,6 +3,7 @@ import Header from "./components/Header.tsx";
 import HomePage from "./pages/HomePage.tsx";
 import Layout from "./components/Layout.tsx";
 import GamePage from "./pages/GamePage.tsx";
+import Footer from "./components/Footer.tsx";
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                     <Route path="/game" element={<GamePage/>}/>
                     <Route path="/scoreboard" element={<HomePage/>}/>
                 </Routes>
+                <Footer />
             </Layout>
         </>
     )
