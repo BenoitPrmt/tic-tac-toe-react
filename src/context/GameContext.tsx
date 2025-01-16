@@ -1,5 +1,5 @@
 import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
-import {BoardType, PlayerType, WinnerType} from '../types/Board';
+import {BoardType, PlayerCellType, PlayerType, WinnerData, WinnerType} from '../types/Board';
 import {usePersistance} from "./PersistanceContext.tsx";
 import {CurrentGame, Shot} from "../types/Game.ts";
 
@@ -86,27 +86,45 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setBoard(tempBoard);
     }
 
-    const checkIfCellsAreWinning = (cells: PlayerType[]): PlayerType => {
-        const [cellA, cellB, cellC] = cells;
-        if (cellA !== "" && (cellA === cellB) && (cellB === cellC)) return cellA;
+    const checkIfCellsAreWinning = (cells: PlayerCellType[]): PlayerType => {
+        const [cellA, cellB, cellC]: PlayerCellType[] = cells;
+        if (cellA !== "" && (cellA === cellB) && (cellB === cellC)) {
+            return cellA as PlayerType;
+        }
         return "";
     };
 
-    const checkVictory = (currentBoard: BoardType): WinnerType => {
+    const checkVictory = (currentBoard: BoardType): WinnerData => {
         // Lines
-        for (const line of currentBoard) {
-            const isWinningLine = checkIfCellsAreWinning(line);
-            if (isWinningLine !== "") return isWinningLine;
+        for (const [index, line] of currentBoard.entries()) {
+            const playerWinner = checkIfCellsAreWinning(line);
+            if (playerWinner !== "") return {
+                winner: playerWinner,
+                coords: [
+                    { x: index, y: 0 },
+                    { x: index, y: 1 },
+                    { x: index, y: 2 },
+                ]
+            };
         }
 
         // Columns
         for(let i = 0; i < currentBoard.length; i++) {
-            const column: PlayerType[] = [];
+            const column: PlayerCellType[] = [];
+            const columnCoords: number[][] = [];
             for(let j = 0; j < currentBoard[i].length; j++) {
                 column.push(currentBoard[j][i]);
+                columnCoords.push([j, i]);
             }
-            const isWinningColumn = checkIfCellsAreWinning(column);
-            if (isWinningColumn !== "") return isWinningColumn;
+            const playerWinner = checkIfCellsAreWinning(column);
+            if (playerWinner !== "") return {
+                winner: playerWinner,
+                coords: [
+                    { x: columnCoords[0][0], y: columnCoords[0][1] },
+                    { x: columnCoords[1][0], y: columnCoords[1][1] },
+                    { x: columnCoords[2][0], y: columnCoords[2][1] },
+                ]
+            };
         }
 
         // Diagonals
@@ -115,21 +133,39 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             currentBoard[1][1],
             currentBoard[2][2],
         ]);
-        if (diagA !== "") return diagA;
+        if (diagA !== "") return {
+            winner: diagA,
+            coords: [
+                { x: 0, y: 0 },
+                { x: 1, y: 1 },
+                { x: 2, y: 2 },
+            ]
+        };
 
         const diagB = checkIfCellsAreWinning([
             currentBoard[0][2],
             currentBoard[1][1],
             currentBoard[2][0],
         ]);
-        if (diagB !== "") return diagB;
+        if (diagB !== "") return {
+            winner: diagB,
+            coords: [
+                { x: 0, y: 2 },
+                { x: 1, y: 1 },
+                { x: 2, y: 0 },
+            ]
+        };
 
         // Check for draw
         if (currentBoard.flat().every(cell => cell !== "")) {
-            return "D";
+            return {
+                winner: "D"
+            };
         }
 
-        return "";
+        return {
+            winner: ""
+        };
     };
 
     const getRandomEmptyCell = (currentBoard: BoardType): number[] | null => {
@@ -190,12 +226,18 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         const newBoard = makeMove(position, "O", currentBoard);
         if (!newBoard) return;
 
+        const gameWinner = checkVictory(newBoard);
+        if (gameWinner.winner) {
+            handleVictory(gameWinner);
+            if (gameWinner.coords) {
+                for(const coord of gameWinner.coords) {
+                    newBoard[coord.x][coord.y] = gameWinner.winner === "X" ? "WX" : "WO";
+                }
+            }
+        }
+
         setBoard(newBoard);
         saveBoard(newBoard);
-        const gameWinner = checkVictory(newBoard);
-        if (gameWinner) {
-            handleVictory(gameWinner);
-        }
 
         saveCurrentGame({
             playerOne: playerOneUsername,
@@ -227,11 +269,14 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         const newBoard: BoardType | null = makeMove(coords, currentPlayer, board);
         if (!newBoard) return;
 
-        setBoard(newBoard);
-        saveBoard(newBoard);
         const gameWinner = checkVictory(newBoard);
-        if (gameWinner) {
+        if (gameWinner.winner) {
             handleVictory(gameWinner);
+            if (gameWinner.coords) {
+                for(const coord of gameWinner.coords) {
+                    newBoard[coord.x][coord.y] = gameWinner.winner === "X" ? "WX" : "WO";
+                }
+            }
         } else {
             saveCurrentGame({
                 playerOne: playerOneUsername,
@@ -245,14 +290,17 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             });
         }
 
+        setBoard(newBoard);
+        saveBoard(newBoard);
+
         setCurrentPlayer((prevPlayer) => prevPlayer === "O" ? "X" : "O");
         if (isGameAgainstComputer) {
             setIsComputerTurn(true);
         }
     }
 
-    const handleVictory = (gameWinner: WinnerType) => {
-        setWinner(gameWinner);
+    const handleVictory = (winnerData: WinnerData) => {
+        setWinner(winnerData.winner);
         saveBoard([]);
         saveLastShots([]);
         setLastShots([]);
@@ -268,7 +316,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             isXTurn: currentPlayer === "X"
         };
 
-        switch (gameWinner) {
+        switch (winnerData.winner) {
             case "X":
                 currentGame.playerOneScore += 1;
                 if (isGameAgainstComputer) savePlayerScore(playerOneUsername, playerOneScore + 1);

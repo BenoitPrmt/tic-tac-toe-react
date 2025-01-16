@@ -22,4 +22,5 @@ export const COLOR_FILL = {
     primary: 'fill-primary',
     secondary: 'fill-secondary',
     greyLight: 'fill-grey-light',
+    greyDark: 'fill-grey-dark',
 }

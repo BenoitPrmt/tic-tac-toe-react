@@ -1,7 +1,7 @@
 import {COLOR_FILL} from "../../constants/Colors.ts";
 
 type Props = {
-    color?: "primary" | "secondary" | "greyLight";
+    color?: "primary" | "secondary" | "greyLight" | "greyDark";
     className?: string;
 }
 
