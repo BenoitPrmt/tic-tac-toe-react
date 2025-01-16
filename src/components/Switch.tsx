@@ -1,10 +1,12 @@
 import {useState} from 'react'
 
 type Props = {
+    choiceOne: string;
+    choiceTwo: string;
     handleChecked: (checked: boolean) => void;
 }
 
-const Switch = ({ handleChecked }: Props) => {
+const Switch = ({ handleChecked, choiceOne, choiceTwo }: Props) => {
     const [isChecked, setIsChecked] = useState(false)
 
     const handleCheckboxChange = () => {
@@ -27,14 +29,14 @@ const Switch = ({ handleChecked }: Props) => {
                         !isChecked ? 'text-grey-medium bg-grey-light-shadow' : 'text-grey-light-shadow'
                     }`}
                 >
-                  Contre l'ordinateur
+                  {choiceOne}
                 </span>
                 <span
                     className={`flex items-center space-x-[6px] rounded py-2 px-[18px] text-md font-bold uppercase ${
                         isChecked ? 'text-grey-medium bg-grey-light-shadow' : 'text-grey-light-shadow'
                     }`}
                 >
-                  Multijoueur local
+                  {choiceTwo}
                 </span>
             </label>
         </>

@@ -1,7 +1,7 @@
-import {createContext, ReactNode, useCallback, useContext, useEffect, useState} from 'react';
+import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {BoardType, PlayerType, WinnerType} from '../types/Board';
 import {usePersistance} from "./PersistanceContext.tsx";
-import {CurrentGame} from "../types/Game.ts";
+import {CurrentGame, Shot} from "../types/Game.ts";
 
 interface GameContextType {
     board: BoardType;
@@ -20,20 +20,26 @@ interface GameContextType {
     setPlayerTwoScore: (score: number) => void;
     draws: number;
     setIsGameAgainstComputer: (isAgainstComputer: boolean) => void;
+    setIsGame3Shots: (is3Shots: boolean) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-    const { saveBoard, getSavedBoard, savePlayerScore, getCurrentGame, saveCurrentGame, getPlayerScore } = usePersistance();
+    const { saveBoard, getSavedBoard, savePlayerScore, getCurrentGame, saveCurrentGame, getPlayerScore, saveLastShots, getLastShots } = usePersistance();
 
     const currentGame = getCurrentGame();
+    const lastShotsData: Shot[] | null = getLastShots();
 
     const [board, setBoard] = useState<BoardType>([]);
     const [currentPlayer, setCurrentPlayer] = useState<PlayerType>(currentGame?.isXTurn ? "X" : "O");
     const [winner, setWinner] = useState<WinnerType>("");
-    const [isComputerTurn, setIsComputerTurn] = useState<boolean>(false);
     const [isGameAgainstComputer, setIsGameAgainstComputer] = useState<boolean>(currentGame?.againstComputer ?? true);
+    const [isGame3Shots, setIsGame3Shots] = useState<boolean>(currentGame?.isGame3Shots ?? true);
+
+    const [isComputerTurn, setIsComputerTurn] = useState<boolean>(isGameAgainstComputer ? !currentGame?.isXTurn : false);
+
+    const [lastShots, setLastShots] = useState<Shot[]>(lastShotsData ?? []);
 
     const [playerOneUsername, setPlayerOneUsername] = useState<string>(currentGame?.playerOne ?? "Joueur 1");
     const [playerTwoUsername, setPlayerTwoUsername] = useState<string>(currentGame?.playerTwo ?? "CPU");
@@ -79,13 +85,13 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setBoard(tempBoard);
     }
 
-    const checkIfCellsAreWinning = useCallback((cells: PlayerType[]): PlayerType => {
+    const checkIfCellsAreWinning = (cells: PlayerType[]): PlayerType => {
         const [cellA, cellB, cellC] = cells;
         if (cellA !== "" && (cellA === cellB) && (cellB === cellC)) return cellA;
         return "";
-    }, []);
+    };
 
-    const checkVictory = useCallback((currentBoard: BoardType): WinnerType => {
+    const checkVictory = (currentBoard: BoardType): WinnerType => {
         // Lines
         for (const line of currentBoard) {
             const isWinningLine = checkIfCellsAreWinning(line);
@@ -123,9 +129,9 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         }
 
         return "";
-    }, [checkIfCellsAreWinning]);
+    };
 
-    const getRandomEmptyCell = useCallback((currentBoard: BoardType): number[] | null => {
+    const getRandomEmptyCell = (currentBoard: BoardType): number[] | null => {
         const emptyCells: number[][] = [];
         for(let i = 0; i < currentBoard.length; i++) {
             for(let j = 0; j < currentBoard[i].length; j++) {
@@ -137,19 +143,46 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         if (emptyCells.length === 0) return null;
         const randomIndex = Math.floor(Math.random() * emptyCells.length);
         return emptyCells[randomIndex];
-    }, []);
+    }
 
-    const makeMove = useCallback((coords: number[], player: PlayerType, currentBoard: BoardType) => {
+    const makeMove = (coords: number[], player: PlayerType, currentBoard: BoardType): BoardType | null => {
         const [row, col] = coords;
         if (currentBoard[row][col] !== "") return null;
 
         const newBoard = currentBoard.map(r => [...r]);
         newBoard[row][col] = player;
+
+        if (isGame3Shots) {
+            const newLastShots = [
+                ...lastShots,
+                {
+                    x: row,
+                    y: col,
+                    type: player,
+                    placedAt: new Date()
+                }
+            ]
+                .sort((a: Shot, b: Shot) => {
+                    return new Date(a.placedAt).getTime() - new Date(b.placedAt).getTime();
+                });
+
+            if (newLastShots.length > 6) {
+                const removedShot: Shot | undefined = newLastShots.shift();
+                if (removedShot) newBoard[removedShot.x][removedShot.y] = "";
+            }
+
+            setLastShots(newLastShots);
+        }
+
         return newBoard;
-    }, []);
+    };
+
+    useEffect(() => {
+        saveLastShots(lastShots);
+    }, [lastShots, saveLastShots]);
 
     // TODO: Regrouper ça avec cell click
-    const computerTurn = useCallback((currentBoard: BoardType) => {
+    const computerTurn = (currentBoard: BoardType) => {
         const position = getRandomEmptyCell(currentBoard);
         if (!position) return;
 
@@ -162,12 +195,24 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         if (gameWinner) {
             handleVictory(gameWinner);
         }
+
+        saveCurrentGame({
+            playerOne: playerOneUsername,
+            playerOneScore: playerOneScore,
+            playerTwo: playerTwoUsername,
+            playerTwoScore: playerTwoScore,
+            draws: draws,
+            againstComputer: isGameAgainstComputer,
+            isGame3Shots: isGame3Shots,
+            isXTurn: true
+        });
+
         setCurrentPlayer("X");
         setIsComputerTurn(false);
-    }, [getRandomEmptyCell, makeMove, checkVictory]);
+    }
 
     useEffect(() => {
-        if ((isComputerTurn || (isGameAgainstComputer && currentPlayer === "O")) && !winner) {
+        if ((isComputerTurn && isGameAgainstComputer && currentPlayer === "O") && !winner) {
             const timer = setTimeout(() => {
                 computerTurn(board);
             }, 1000);
@@ -175,10 +220,10 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [isComputerTurn, winner, computerTurn, board]);
 
-    const handleCellClick = useCallback((coords: number[]) => {
+    const handleCellClick = (coords: number[]) => {
         if (winner || isComputerTurn) return;
 
-        const newBoard = makeMove(coords, currentPlayer, board);
+        const newBoard: BoardType | null = makeMove(coords, currentPlayer, board);
         if (!newBoard) return;
 
         setBoard(newBoard);
@@ -194,6 +239,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
                 playerTwoScore: playerTwoScore,
                 draws: draws,
                 againstComputer: isGameAgainstComputer,
+                isGame3Shots: isGame3Shots,
                 isXTurn: !(currentPlayer === "X")
             });
         }
@@ -202,11 +248,13 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         if (isGameAgainstComputer) {
             setIsComputerTurn(true);
         }
-    }, [winner, isComputerTurn, makeMove, currentPlayer, board, checkVictory, isGameAgainstComputer]);
+    }
 
     const handleVictory = (gameWinner: WinnerType) => {
         setWinner(gameWinner);
         saveBoard([]);
+        saveLastShots([]);
+        setLastShots([]);
 
         const currentGame: CurrentGame = {
             playerOne: playerOneUsername,
@@ -215,6 +263,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             playerTwoScore: playerTwoScore,
             draws: draws,
             againstComputer: isGameAgainstComputer,
+            isGame3Shots: isGame3Shots,
             isXTurn: currentPlayer === "X"
         };
 
@@ -244,20 +293,14 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setWinner("");
         setIsComputerTurn(false);
         saveBoard([]);
+        saveLastShots([]);
+        setLastShots([]);
 
         if (resetScores && !isGameAgainstComputer) {
             setPlayerOneScore(0);
             setPlayerTwoScore(0);
             setDraws(0);
-            saveCurrentGame({
-                playerOne: playerOneUsername,
-                playerOneScore: 0,
-                playerTwo: playerTwoUsername,
-                playerTwoScore: 0,
-                draws: 0,
-                againstComputer: isGameAgainstComputer,
-                isXTurn: true
-            })
+            saveCurrentGame(null);
         }
     }
 
@@ -277,7 +320,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setPlayerTwoScore,
         draws,
         resetBoard,
-        setIsGameAgainstComputer
+        setIsGameAgainstComputer,
+        setIsGame3Shots
     };
 
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

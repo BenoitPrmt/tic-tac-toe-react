@@ -17,3 +17,9 @@ export const WINNER_COLORS = {
     O: "text-secondary",
     D: "text-light-grey",
 };
+
+export const COLOR_FILL = {
+    primary: 'fill-primary',
+    secondary: 'fill-secondary',
+    greyLight: 'fill-grey-light',
+}
