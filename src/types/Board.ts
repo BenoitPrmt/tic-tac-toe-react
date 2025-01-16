@@ -7,7 +7,7 @@ export type CoordinatesType = {
 
 export type PlayerType = "" | "X" | "O";
 
-export type PlayerCellType = PlayerType | "WX" | "WO";
+export type PlayerCellType = PlayerType | "WX" | "WO" | "NX" | "NO"; // WX & WO : Winner cells -- NX & NO : Next deleted cell
 
 export type WinnerType = PlayerType | "D";
 

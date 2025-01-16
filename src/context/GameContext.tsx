@@ -207,6 +207,10 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
                 const removedShot: Shot | undefined = newLastShots.shift();
                 if (removedShot) newBoard[removedShot.x][removedShot.y] = "";
             }
+            if (newLastShots.length >= 5) {
+                const nextDeletedShot: Shot = newLastShots[0];
+                newBoard[nextDeletedShot.x][nextDeletedShot.y] = nextDeletedShot.type === "X" ? "NX" : "NO";
+            }
 
             setLastShots(newLastShots);
         }

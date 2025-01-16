@@ -17,9 +17,9 @@ const BoardCell = ({ boardCell, coords }: Props) => {
             onClick={() => handleCellClick(coords)}
         >
             {boardCell[boardCell.length - 1] === "X" &&
-                <Cross className={"p-5"} color={boardCell.startsWith("W") ? "greyDark" : "primary"}/>}
+                <Cross className={`p-5 ${boardCell.startsWith("N") ? "animate-pulse" : ""}`} color={boardCell.startsWith("W") ? "greyDark" : "primary"}/>}
             {boardCell[boardCell.length - 1] === "O" &&
-                <Circle className={"p-5"} color={boardCell.startsWith("W") ? "greyDark" : "secondary"}/>}
+                <Circle className={`p-5 ${boardCell.startsWith("N") ? "animate-pulse" : ""}`} color={boardCell.startsWith("W") ? "greyDark" : "secondary"}/>}
             {!isComputerTurn && boardCell === "" && (currentPlayer === "X" ? <Cross className={"p-5 opacity-0 hover:opacity-25"}/> : <Circle className={"p-5 opacity-0 hover:opacity-25"}/>)}
         </div>
     );
