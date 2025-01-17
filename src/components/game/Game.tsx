@@ -1,10 +1,10 @@
 import { useGame } from "../../hooks/useGame";
-import BoardComponent from "./Board";
-import PlayerTurn from "./PlayerTurn";
-import WinnerModal from "../WinnerModal";
+import PlayerTurn from "./player/PlayerTurn.tsx";
+import WinnerModal from "./winner/WinnerModal.tsx";
 import Button from "../Button.tsx";
 import {RotateCwIcon} from "lucide-react";
-import Logo from "../Logo.tsx";
+import Logo from "../assets/Logo.tsx";
+import BoardComponent from "./board/Board.tsx";
 
 const GameComponent = () => {
     const { winner, resetAndSave } = useGame();

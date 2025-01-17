@@ -1,4 +1,4 @@
-import Logo from "./Logo.tsx";
+import Logo from "../assets/Logo.tsx";
 import {Link} from "react-router";
 import {GithubIcon, LinkedinIcon} from "lucide-react";
 import {memo} from "react";

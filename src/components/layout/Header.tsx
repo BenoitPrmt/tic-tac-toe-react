@@ -1,7 +1,7 @@
-import Logo from "./Logo.tsx";
-import Button from "./Button.tsx";
+import Logo from "../assets/Logo.tsx";
+import Button from "../Button.tsx";
 import {Link} from "react-router";
-import { useGame } from "../hooks/useGame";
+import { useGame } from "../../hooks/useGame.ts";
 import {memo} from "react";
 
 const Header = memo(() => {

@@ -1,10 +1,10 @@
 import {SyntheticEvent, useEffect, useRef} from "react";
-import {WinnerType} from "../types/Board.ts";
-import cross from "../assets/images/game/cross.svg";
-import circle from "../assets/images/game/circle.svg";
-import Button from "./Button.tsx";
-import {WINNER_COLORS} from "../constants/Colors.ts";
-import { useGame } from "../hooks/useGame";
+import {WinnerType} from "../../../types/Board.ts";
+import cross from "../../../assets/images/game/cross.svg";
+import circle from "../../../assets/images/game/circle.svg";
+import Button from "../../Button.tsx";
+import {WINNER_COLORS} from "../../../constants/colors.ts";
+import { useGame } from "../../../hooks/useGame.ts";
 import {useNavigate} from "react-router";
 
 type Props = {

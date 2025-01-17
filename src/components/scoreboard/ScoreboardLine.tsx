@@ -1,5 +1,5 @@
 import {PlayerLeaderboardType} from "../../types/Player.ts";
-import {GAMEMODES} from "../../constants/Gamemode.ts";
+import {GAMEMODES} from "../../constants/gamemode.ts";
 import {ColorType} from "../../types/Colors.ts";
 import Tile from "../Tile.tsx";
 import {formatDate} from "../../utils/formatDate.ts";
