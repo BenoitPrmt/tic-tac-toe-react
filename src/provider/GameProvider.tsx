@@ -5,6 +5,7 @@ import {BoardType, PlayerCellType, PlayerType, WinnerData, WinnerType} from "../
 import {BOARD_SIZE, COMPUTER_MOVE_DELAY, INITIAL_BOARD, MAX_SHOTS} from "../constants/game.ts";
 import {PlayerScoreType} from "../types/Player.ts";
 import {GameContext} from "../context/GameContext.tsx";
+import {changeFavicon} from "../utils/favicon.ts";
 
 export const GameProvider = ({children}: { children: ReactNode }) => {
     const {
@@ -229,6 +230,10 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
             }
         }
     }, [currentPlayer, isComputerTurn, isGameAgainstComputer, processMove, winner]);
+
+    useEffect(() => {
+        changeFavicon(currentPlayer);
+    }, [currentPlayer]);
 
     useEffect(() => {
         if ((isComputerTurn && isGameAgainstComputer && currentPlayer === "O") && !winner) {
