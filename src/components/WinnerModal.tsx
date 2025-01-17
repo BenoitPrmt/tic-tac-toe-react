@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import {SyntheticEvent, useEffect, useRef} from "react";
 import {WinnerType} from "../types/Board.ts";
 import cross from "../assets/images/game/cross.svg";
 import circle from "../assets/images/game/circle.svg";
@@ -16,7 +16,7 @@ type Props = {
 
 const WinnerModal = ({title, visible, winner, onClose}: Props) => {
     const { resetBoard, resetAndSave } = useGame();
-    const modalRef = useRef(null);
+    const modalRef = useRef<HTMLDialogElement>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,7 +39,6 @@ const WinnerModal = ({title, visible, winner, onClose}: Props) => {
             return;
         }
         modalRef.current.close();
-
     }
 
     const handleQuitGame = () => {
@@ -48,7 +47,7 @@ const WinnerModal = ({title, visible, winner, onClose}: Props) => {
         navigate("/");
     }
 
-    const handleESC = (event) => {
+    const handleESC = (event: SyntheticEvent<HTMLDialogElement, Event>) => {
         event.preventDefault();
         handleClose();
     }
