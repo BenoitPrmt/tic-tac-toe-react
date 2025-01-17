@@ -1,6 +1,6 @@
 import cross from "../../assets/images/game/cross.svg";
 import circle from "../../assets/images/game/circle.svg";
-import {useGame} from "../../context/GameContext.tsx";
+import {useGame} from "../../hooks/useGame.ts";
 
 const PlayerTurn = () => {
     const { currentPlayer } = useGame();

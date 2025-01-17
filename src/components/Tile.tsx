@@ -7,7 +7,7 @@ type Props = {
     children: ReactNode;
 }
 
-const Button = ({ color, children }: Props) => {
+const Tile = ({ color, children }: Props) => {
     return (
         <span className={`${color === "dark" ? "text-grey-light" : "text-grey-medium"} font-extrabold uppercase rounded-lg active:translate-y-1 px-4 py-2 ${COLOR_BACKGROUND[color]} ${COLOR_HOVER[color]} ${COLOR_SHADOW[color]}`}>
             {children}
@@ -15,4 +15,4 @@ const Button = ({ color, children }: Props) => {
     );
 };
 
-export default Button;
+export default Tile;

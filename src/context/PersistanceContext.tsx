@@ -98,18 +98,24 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
     const getLeaderboard = (): PlayerLeaderboardType[] => {
         const scores = localStorage.getItem("scores");
         if (scores) {
-            const sortedData: PlayerLeaderboardType[] = JSON.parse(scores)
-                .sort((a: PlayerScoreType, b: PlayerScoreType) => b.score - a.score)
+            const currentPlayer: PlayerScoreType | null = getCurrentPlayer();
+            const sortedData: PlayerScoreType[] = JSON.parse(scores);
+
+            if (currentPlayer) {
+                sortedData.push(currentPlayer);
+            }
+
+            const leaderboard: PlayerLeaderboardType[] = sortedData.sort((a: PlayerScoreType, b: PlayerScoreType) => b.score - a.score)
                 .slice(0, 10)
                 .map((item: PlayerScoreType, index: number) => ({ rank: index+1, ...item }));
 
-            for (let i = 1; i < sortedData.length; i++) {
-                if (sortedData[i-1].score === sortedData[i].score) {
-                    sortedData[i].rank = sortedData[i-1].rank
+            for (let i = 1; i < leaderboard.length; i++) {
+                if (leaderboard[i-1].score === leaderboard[i].score) {
+                    leaderboard[i].rank = leaderboard[i-1].rank
                 }
             }
 
-            return sortedData;
+            return leaderboard;
         }
         return [];
     }

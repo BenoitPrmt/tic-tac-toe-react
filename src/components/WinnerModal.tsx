@@ -4,7 +4,7 @@ import cross from "../assets/images/game/cross.svg";
 import circle from "../assets/images/game/circle.svg";
 import Button from "./Button.tsx";
 import {WINNER_COLORS} from "../constants/Colors.ts";
-import {useGame} from "../context/GameContext.tsx";
+import { useGame } from "../hooks/useGame";
 import {useNavigate} from "react-router";
 
 type Props = {

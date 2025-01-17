@@ -3,12 +3,13 @@ import {GAMEMODES} from "../../constants/Gamemode.ts";
 import {ColorType} from "../../types/Colors.ts";
 import Tile from "../Tile.tsx";
 import {formatDate} from "../../utils/formatDate.ts";
+import {memo} from "react";
 
 type Props = {
     item: PlayerLeaderboardType;
 }
 
-const ScoreboardLine = ({ item }: Props) => {
+const ScoreboardLine = memo(({ item }: Props) => {
     let scoreboardColor: ColorType;
 
     switch (item.rank) {
@@ -37,6 +38,6 @@ const ScoreboardLine = ({ item }: Props) => {
             <td className={"p-4 hidden md:block"}>{formatDate(item.timestamp)}</td>
         </tr>
     );
-};
+});
 
 export default ScoreboardLine;

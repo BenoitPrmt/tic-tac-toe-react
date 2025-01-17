@@ -1,8 +1,9 @@
 import Logo from "./Logo.tsx";
 import {Link} from "react-router";
 import {GithubIcon, LinkedinIcon} from "lucide-react";
+import {memo} from "react";
 
-const Footer = () => {
+const Footer = memo(() => {
     return (
         <footer className={"flex flex-row justify-between py-5 px-4"}>
             <div className="flex flex-row space-y-3">
@@ -23,6 +24,6 @@ const Footer = () => {
             </div>
         </footer>
     );
-};
+});
 
 export default Footer;
