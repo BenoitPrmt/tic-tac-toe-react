@@ -3,8 +3,8 @@ import Button from "../components/Button.tsx";
 import Input from "../components/Input.tsx";
 import Switch from "../components/Switch.tsx";
 import {useNavigate} from "react-router";
-import {useGame} from "../context/GameContext.tsx";
-import {usePersistance} from "../context/PersistanceContext.tsx";
+import { useGame } from "../hooks/useGame";
+import {usePersistance} from "../hooks/usePersistance.ts";
 import {PlayerScoreType} from "../types/Player.ts";
 
 const HomePage = () => {

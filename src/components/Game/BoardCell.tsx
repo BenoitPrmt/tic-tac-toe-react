@@ -1,14 +1,15 @@
 import {PlayerCellType} from "../../types/Board.ts";
-import { useGame } from "../../context/GameContext";
+import { useGame } from "../../hooks/useGame";
 import Circle from "../Images/Circle.tsx";
 import Cross from "../Images/Cross.tsx";
+import {memo} from "react";
 
 type Props = {
     boardCell: PlayerCellType;
     coords: number[];
 }
 
-const BoardCell = ({ boardCell, coords }: Props) => {
+const BoardCell = memo(({ boardCell, coords }: Props) => {
     const { handleCellClick, currentPlayer, isComputerTurn } = useGame();
 
     return (
@@ -23,6 +24,6 @@ const BoardCell = ({ boardCell, coords }: Props) => {
             {!isComputerTurn && boardCell === "" && (currentPlayer === "X" ? <Cross className={"p-5 opacity-0 hover:opacity-25"}/> : <Circle className={"p-5 opacity-0 hover:opacity-25"}/>)}
         </div>
     );
-};
+});
 
 export default BoardCell;

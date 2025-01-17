@@ -1,4 +1,4 @@
-import { useGame } from "../../context/GameContext";
+import { useGame } from "../../hooks/useGame";
 import BoardComponent from "./Board";
 import PlayerTurn from "./PlayerTurn";
 import WinnerModal from "../WinnerModal";

@@ -1,9 +1,10 @@
 import Logo from "./Logo.tsx";
 import Button from "./Button.tsx";
 import {Link} from "react-router";
-import {useGame} from "../context/GameContext.tsx";
+import { useGame } from "../hooks/useGame";
+import {memo} from "react";
 
-const Header = () => {
+const Header = memo(() => {
     const { hasGameLaunched } = useGame();
 
     return (
@@ -31,6 +32,6 @@ const Header = () => {
             </nav>
         </header>
     );
-};
+});
 
 export default Header;

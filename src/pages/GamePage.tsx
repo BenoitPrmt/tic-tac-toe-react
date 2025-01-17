@@ -1,6 +1,6 @@
 import ScoreCell from "../components/Game/ScoreCell.tsx";
 import GameComponent from "../components/Game/Game.tsx";
-import {useGame} from "../context/GameContext.tsx";
+import { useGame } from "../hooks/useGame";
 
 const GamePage = () => {
     const { playerOneUsername, playerTwoUsername, draws, playerOneScore, playerTwoScore } = useGame();
