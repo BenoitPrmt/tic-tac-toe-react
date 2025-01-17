@@ -1,5 +1,5 @@
-import circle from "../assets/images/game/circle.svg";
-import cross from "../assets/images/game/cross.svg";
+import circle from "../../assets/images/game/circle.svg";
+import cross from "../../assets/images/game/cross.svg";
 import {memo} from "react";
 
 const Logo = memo(() => {

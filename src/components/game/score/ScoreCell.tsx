@@ -1,5 +1,5 @@
-import {ColorType} from "../../types/Colors.ts";
-import {COLOR_BACKGROUND} from "../../constants/Colors.ts";
+import {ColorType} from "../../../types/Colors.ts";
+import {COLOR_BACKGROUND} from "../../../constants/colors.ts";
 
 type Props = {
     color: ColorType;

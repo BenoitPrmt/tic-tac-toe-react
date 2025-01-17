@@ -1,6 +1,6 @@
 import {ColorType} from "../types/Colors.ts";
 import {ReactNode} from "react";
-import {COLOR_BACKGROUND, COLOR_HOVER, COLOR_SHADOW} from "../constants/Colors.ts";
+import {COLOR_BACKGROUND, COLOR_HOVER, COLOR_SHADOW} from "../constants/colors.ts";
 
 type Props = {
     color: ColorType

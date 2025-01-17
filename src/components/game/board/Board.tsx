@@ -1,7 +1,7 @@
 import { Fragment } from "react";
-import BoardCell from "./BoardCell";
-import {PlayerCellType} from "../../types/Board";
-import { useGame } from "../../hooks/useGame";
+import BoardCell from "./BoardCell.tsx";
+import {PlayerCellType} from "../../../types/Board.ts";
+import { useGame } from "../../../hooks/useGame.ts";
 
 const BoardComponent = () => {
     const { board } = useGame();

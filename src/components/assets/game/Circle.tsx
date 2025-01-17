@@ -1,4 +1,4 @@
-import {COLOR_FILL} from "../../constants/Colors.ts";
+import {COLOR_FILL} from "../../../constants/colors.ts";
 
 type Props = {
     color?: "primary" | "secondary" | "greyLight" | "greyDark";

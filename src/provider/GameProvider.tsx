@@ -2,7 +2,7 @@ import {ReactNode, useCallback, useEffect, useState} from "react";
 import {usePersistance} from "../hooks/usePersistance.ts";
 import {CurrentGame, Shot} from "../types/Game.ts";
 import {BoardType, PlayerCellType, PlayerType, WinnerData, WinnerType} from "../types/Board.ts";
-import {BOARD_SIZE, COMPUTER_MOVE_DELAY, INITIAL_BOARD, MAX_SHOTS} from "../constants/Game.ts";
+import {BOARD_SIZE, COMPUTER_MOVE_DELAY, INITIAL_BOARD, MAX_SHOTS} from "../constants/game.ts";
 import {PlayerScoreType} from "../types/Player.ts";
 import {GameContext} from "../context/GameContext.tsx";
 

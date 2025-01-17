@@ -1,6 +1,6 @@
 import {useState} from 'react'
-import circle from "../../assets/images/game/circle.svg";
-import cross from "../../assets/images/game/cross.svg";
+import circle from "../../../assets/images/game/circle.svg";
+import cross from "../../../assets/images/game/cross.svg";
 
 const PlayerChoice = () => {
     const [isChecked, setIsChecked] = useState(false)

@@ -1,4 +1,4 @@
-import ScoreboardTable from "../components/Scoreboard/ScoreboardTable.tsx";
+import ScoreboardTable from "../components/scoreboard/ScoreboardTable.tsx";
 
 const ScoreboardPage = () => {
     return (

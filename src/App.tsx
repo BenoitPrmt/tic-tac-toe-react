@@ -1,9 +1,9 @@
 import {Route, Routes} from "react-router";
-import Header from "./components/Header.tsx";
+import Header from "./components/layout/Header.tsx";
 import HomePage from "./pages/HomePage.tsx";
-import Layout from "./components/Layout.tsx";
+import Layout from "./components/layout/Layout.tsx";
 import GamePage from "./pages/GamePage.tsx";
-import Footer from "./components/Footer.tsx";
+import Footer from "./components/layout/Footer.tsx";
 import ScoreboardPage from "./pages/ScoreboardPage.tsx";
 
 function App() {
