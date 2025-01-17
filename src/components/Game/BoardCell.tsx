@@ -1,7 +1,7 @@
 import {PlayerCellType} from "../../types/Board.ts";
 import { useGame } from "../../hooks/useGame";
-import Circle from "../Images/Circle.tsx";
-import Cross from "../Images/Cross.tsx";
+import Circle from "../Assets/Circle.tsx";
+import Cross from "../Assets/Cross.tsx";
 import {memo} from "react";
 
 type Props = {
