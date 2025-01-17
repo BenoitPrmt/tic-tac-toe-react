@@ -219,7 +219,7 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
     const handleCellClick = useCallback((coords: number[]) => {
         if (winner || isComputerTurn) return;
 
-        if (board[coords[0]][coords[1]].startsWith("W") || board[coords[0]][coords[1]].startsWith("N")) return null;
+        if (board[coords[0]][coords[1]] !== "" || board[coords[0]][coords[1]].startsWith("W") || board[coords[0]][coords[1]].startsWith("N")) return null;
 
         const hasWinner = processMove(coords, currentPlayer);
         if (!hasWinner) {
