@@ -9,7 +9,7 @@ type Props = {
 
 const ScoreCell = ({ color, title, score }: Props) => {
     return (
-        <div className={`${COLOR_BACKGROUND[color]} rounded-lg h-auto w-[10vh] flex items-center flex-col`}>
+        <div className={`${COLOR_BACKGROUND[color]} rounded-lg h-auto min-w-[10vh] flex items-center flex-col`}>
             <p className={"text-grey-dark"}>{title}</p>
             <p className={"text-3xl font-semibold text-grey-dark"}>{score}</p>
         </div>
