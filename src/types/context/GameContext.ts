@@ -18,6 +18,7 @@ export interface GameContextType {
     setPlayerTwoScore: (score: number) => void;
     draws: number;
     setIsGameAgainstComputer: (isAgainstComputer: boolean) => void;
+    isGame3Shots: boolean;
     setIsGame3Shots: (is3Shots: boolean) => void;
     hasGameLaunched: () => boolean;
 }

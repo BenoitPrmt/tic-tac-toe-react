@@ -323,6 +323,7 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
         resetBoard,
         resetAndSave,
         setIsGameAgainstComputer,
+        isGame3Shots,
         setIsGame3Shots,
         hasGameLaunched
     };
