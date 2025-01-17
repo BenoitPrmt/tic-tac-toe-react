@@ -100,7 +100,7 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
 
     const makeMove = useCallback((coords: number[], player: PlayerType, currentBoard: BoardType): BoardType | null => {
         const [row, col] = coords;
-        if (currentBoard[row][col] !== "") return null;
+        if (currentBoard[row][col] !== "" || currentBoard[row][col].startsWith("W") || currentBoard[row][col].startsWith("N")) return null;
 
         const newBoard = currentBoard.map(r => [...r]);
         newBoard[row][col] = player;
@@ -120,7 +120,7 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
                 const removedShot = newLastShots.shift();
                 if (removedShot) newBoard[removedShot.x][removedShot.y] = "";
             }
-            if (newLastShots.length >= 5) {
+            if (newLastShots.length > 5) {
                 const nextDeletedShot = newLastShots[0];
                 newBoard[nextDeletedShot.x][nextDeletedShot.y] = nextDeletedShot.type === "X" ? "NX" : "NO";
             }
@@ -218,6 +218,8 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
 
     const handleCellClick = useCallback((coords: number[]) => {
         if (winner || isComputerTurn) return;
+
+        if (board[coords[0]][coords[1]].startsWith("W") || board[coords[0]][coords[1]].startsWith("N")) return null;
 
         const hasWinner = processMove(coords, currentPlayer);
         if (!hasWinner) {
