@@ -4,7 +4,7 @@ import Input from "../components/Input.tsx";
 import Switch from "../components/Switch.tsx";
 import {useNavigate} from "react-router";
 import { useGame } from "../hooks/useGame";
-import {usePersistance} from "../context/PersistanceContext.tsx";
+import {usePersistance} from "../hooks/usePersistance.ts";
 import {PlayerScoreType} from "../types/Player.ts";
 
 const HomePage = () => {

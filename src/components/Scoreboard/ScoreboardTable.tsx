@@ -1,6 +1,6 @@
 import {PlayerLeaderboardType} from "../../types/Player.ts";
 import ScoreboardLine from "./ScoreboardLine.tsx";
-import {usePersistance} from "../../context/PersistanceContext.tsx";
+import {usePersistance} from "../../hooks/usePersistance";
 
 const ScoreboardTable = () => {
     const { getLeaderboard } = usePersistance()
