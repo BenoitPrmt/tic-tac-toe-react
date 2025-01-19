@@ -23,7 +23,7 @@ const Header = memo(() => {
                         <li>
                             <Link to="/game" aria-label="Reprendre la partie en cours">
                                 <Button color="greyLight">
-                                    Partie en cours
+                                    Jeu
                                 </Button>
                             </Link>
                         </li>
