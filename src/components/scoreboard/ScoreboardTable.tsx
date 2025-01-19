@@ -19,7 +19,15 @@ const ScoreboardTable = () => {
             </tr>
             </thead>
             <tbody>
-                {scoreboard.map((item: PlayerLeaderboardType, index: number) => <ScoreboardLine item={item} key={index} />)}
+                {scoreboard.length > 0 ? (
+                    scoreboard.map((item: PlayerLeaderboardType, index: number) => (
+                        <ScoreboardLine key={index} item={item} />
+                    ))
+                ) : (
+                    <tr className={"text-grey-light"}>
+                        <td colSpan={5} className={"p-4 text-center"}>Aucun score enregistré pour le moment</td>
+                    </tr>
+                )}
             </tbody>
         </table>
     );
