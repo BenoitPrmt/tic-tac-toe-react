@@ -17,6 +17,7 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const savePlayerScore = (playerScore: PlayerScoreType) => {
+        if (playerScore.score === 0) return;
         const scores = localStorage.getItem("scores");
         if (scores) {
             const scoresData: PlayerScoreType[] = JSON.parse(scores);
@@ -91,7 +92,7 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
             }
 
             const leaderboard: PlayerLeaderboardType[] = sortedData.sort((a: PlayerScoreType, b: PlayerScoreType) => b.score - a.score)
-                .slice(0, 10)
+                .filter((item: PlayerScoreType) => item.score > 0)
                 .map((item: PlayerScoreType, index: number) => ({ rank: index+1, ...item }));
 
             for (let i = 1; i < leaderboard.length; i++) {
