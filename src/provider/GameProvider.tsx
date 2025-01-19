@@ -1,9 +1,9 @@
 import {ReactNode, useCallback, useEffect, useState} from "react";
 import {usePersistance} from "../hooks/usePersistance.ts";
 import {CurrentGame, Shot} from "../types/Game.ts";
-import {BoardType, PlayerCellType, PlayerType, WinnerData, WinnerType} from "../types/Board.ts";
+import {BoardType} from "../types/Board.ts";
 import {BOARD_SIZE, COMPUTER_MOVE_DELAY, INITIAL_BOARD, MAX_SHOTS} from "../constants/game.ts";
-import {PlayerScoreType} from "../types/Player.ts";
+import {PlayerCellType, PlayerScoreType, PlayerType, WinnerData, WinnerType} from "../types/Player.ts";
 import {GameContext} from "../context/GameContext.tsx";
 import {changeFavicon} from "../utils/favicon.ts";
 
@@ -37,6 +37,10 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
     const [playerTwoScore, setPlayerTwoScore] = useState<number>(currentGame?.playerTwoScore ?? 0);
     const [draws, setDraws] = useState<number>(currentGame?.draws ?? 0);
 
+    /**
+     * Save the current game state to the local storage with PersistanceContext
+     * @param gameState - The game state to save
+     */
     const saveGameState = useCallback((gameState: Partial<CurrentGame>) => {
         saveCurrentGame({
             playerOne: playerOneUsername,
@@ -51,6 +55,12 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
         });
     }, [saveCurrentGame, playerOneUsername, playerOneScore, playerTwoUsername, playerTwoScore, draws, isGameAgainstComputer, isGame3Shots, currentPlayer]);
 
+    /**
+     * Check if the cells at passed indexes are winning
+     * @param cells - The cells to check
+     *
+     * @returns PlayerType - The winner
+     */
     const checkIfCellsAreWinning = useCallback((cells: PlayerCellType[]): PlayerType => {
         const [cellA, cellB, cellC]: PlayerCellType[] = cells;
         if (cellA !== "" && (cellA[cellA.length - 1] === cellB[cellB.length - 1]) && (cellB[cellB.length - 1] === cellC[cellC.length - 1])) {
@@ -59,6 +69,12 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
         return "";
     }, []);
 
+    /**
+     * Check if the current board has a winner
+     * @param currentBoard - The current board
+     *
+     * @returns WinnerData - The winner data
+     */
     const checkVictory = useCallback((currentBoard: BoardType): WinnerData => {
         // Lines check
         for (const [index, line] of currentBoard.entries()) {
@@ -99,6 +115,14 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
         };
     }, [checkIfCellsAreWinning]);
 
+    /**
+     * Make a move on the board at the given coordinates, for the given player and return the new board
+     * @param coords - The coordinates of the cell clicked
+     * @param player - The player who clicked
+     * @param currentBoard - The current board
+     *
+     * @returns BoardType | null - The new board or null if the move is invalid
+     */
     const makeMove = useCallback((coords: number[], player: PlayerType, currentBoard: BoardType): BoardType | null => {
         const [row, col] = coords;
         if (currentBoard[row][col] !== "" || currentBoard[row][col].startsWith("W") || currentBoard[row][col].startsWith("N")) return null;
@@ -133,6 +157,11 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
         return newBoard;
     }, [isGame3Shots, lastShots, saveLastShots]);
 
+    /**
+     * Handle the victory of a player and update the scores
+     * @param winnerData - The winner data
+     * @param newBoard - The new board
+     */
     const handleVictory = useCallback((winnerData: WinnerData, newBoard: BoardType) => {
         setWinner(winnerData.winner);
         saveBoard([]);
@@ -200,6 +229,11 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
         });
     }, [saveBoard, isGame3Shots, playerOneScore, playerTwoScore, draws, saveGameState, saveLastShots, isGameAgainstComputer, saveCurrentPlayer, playerOneUsername, savePlayerScore]);
 
+    /**
+     * Process the move of a player and update the board
+     * @param coords - The coordinates of the cell clicked
+     * @param player - The player who clicked
+     */
     const processMove = useCallback((coords: number[], player: PlayerType) => {
         const newBoard = makeMove(coords, player, board);
         if (!newBoard) return;
@@ -217,6 +251,10 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
         return gameWinner.winner;
     }, [board, checkVictory, handleVictory, makeMove, saveBoard, saveGameState]);
 
+    /**
+     * Handle the click on a cell of the board
+     * @param coords - The coordinates of the cell clicked
+     */
     const handleCellClick = useCallback((coords: number[]) => {
         if (winner || isComputerTurn) return;
 
@@ -229,12 +267,19 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
                 setIsComputerTurn(true);
             }
         }
-    }, [currentPlayer, isComputerTurn, isGameAgainstComputer, processMove, winner]);
+    }, [board, currentPlayer, isComputerTurn, isGameAgainstComputer, processMove, winner]);
 
+    /**
+     * Change the favicon according to the current player
+     */
     useEffect(() => {
         changeFavicon(currentPlayer);
     }, [currentPlayer]);
 
+    /**
+     * Handle the computer turn
+     * The computer will randomly play after a delay
+     */
     useEffect(() => {
         if ((isComputerTurn && isGameAgainstComputer && currentPlayer === "O") && !winner) {
             const timer = setTimeout(() => {
@@ -258,6 +303,10 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
         }
     }, [board, currentPlayer, isComputerTurn, isGameAgainstComputer, processMove, winner]);
 
+    /**
+     * Reset the board and the scores
+     * @param resetScores - If the scores should be reset
+     */
     const resetBoard = (resetScores: boolean) => {
         if (resetScores && !isGameAgainstComputer) {
             setPlayerOneScore(0);
@@ -276,6 +325,10 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
         setLastShots([]);
     }
 
+    /**
+     * Reset the board and the scores and save the current game
+     * If the game is against the computer, the computer turn is reset and the current player is saved (for the scoreboard)
+     */
     const resetAndSave = () => {
         if (isGameAgainstComputer) {
             const currentPlayer: PlayerScoreType | null = getCurrentPlayer()
@@ -308,6 +361,10 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
         setLastShots([]);
     }
 
+    /**
+     * Return if the game has launched
+     * @returns boolean - If the game has launched
+     */
     const hasGameLaunched = (): boolean => {
         return board.flat().filter((cell) => cell === "").length !== 9 && currentGame != null;
     }

@@ -1,4 +1,4 @@
-import {PlayerCellType} from "../../../types/Board.ts";
+import {PlayerCellType} from "../../../types/Player.ts";
 import { useGame } from "../../../hooks/useGame.ts";
 import Circle from "../../assets/game/Circle.tsx";
 import Cross from "../../assets/game/Cross.tsx";

@@ -6,6 +6,7 @@ import {useNavigate} from "react-router";
 import { useGame } from "../hooks/useGame";
 import {usePersistance} from "../hooks/usePersistance.ts";
 import {PlayerScoreType} from "../types/Player.ts";
+import {GAMEMODES} from "../constants/gamemode.ts";
 
 const HomePage = () => {
     const [isGameMode3Shots, setGameMode3Shots] = useState<boolean>(false);
@@ -97,8 +98,8 @@ const HomePage = () => {
                 </div>
 
                 <div>
-                    <Switch handleChecked={handleGameTypeChange} choiceOne={"Mode classique"}
-                            choiceTwo={"Mode en 3 coups"}/>
+                    <Switch handleChecked={handleGameTypeChange} choiceOne={GAMEMODES.normal}
+                            choiceTwo={GAMEMODES.threeShots}/>
                 </div>
 
                 <div>

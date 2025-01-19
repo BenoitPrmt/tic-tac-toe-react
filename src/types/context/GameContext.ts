@@ -1,4 +1,5 @@
-import {BoardType, PlayerType, WinnerType} from "../Board.ts";
+import {BoardType} from "../Board.ts";
+import {PlayerType, WinnerType} from "../Player.ts";
 
 export interface GameContextType {
     board: BoardType;

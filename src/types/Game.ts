@@ -1,4 +1,4 @@
-import {PlayerType} from "./Board.ts";
+import {PlayerType} from "./Player.ts";
 
 export type CurrentGame = {
     playerOne: string;

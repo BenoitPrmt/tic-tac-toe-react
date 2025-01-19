@@ -5,6 +5,10 @@ import {CurrentGame, Shot} from "../types/Game.ts";
 import { PersistanceContext } from "../context/PersistanceContext.tsx";
 
 export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
+    /**
+     * Save the board in the local storage
+     * @param board
+     */
     const saveBoard = (board: BoardType) => {
         localStorage.setItem(
             'board',
@@ -12,10 +16,18 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         );
     }
 
+    /**
+     * Get the saved board from the local storage
+     * @returns saved board
+     */
     const getSavedBoard = (): BoardType => {
         return JSON.parse(localStorage.getItem('board') ?? "[]");
     }
 
+    /**
+     * Save the player score in the local storage
+     * @param playerScore
+     */
     const savePlayerScore = (playerScore: PlayerScoreType) => {
         if (playerScore.score === 0) return;
         const scores = localStorage.getItem("scores");
@@ -28,6 +40,10 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
+    /**
+     * Save the current game in the local storage
+     * @param currentGame
+     */
     const saveCurrentGame = (currentGame: CurrentGame | null) => {
         if (!currentGame) {
             localStorage.removeItem("current");
@@ -36,6 +52,10 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
+    /**
+     * Get the current game from the local storage
+     * @returns current game
+     */
     const getCurrentGame = (): CurrentGame|null => {
         const currentGame = localStorage.getItem("current");
         if (currentGame) {
@@ -44,6 +64,10 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         return null;
     }
 
+    /**
+     * Save the current player in the local storage
+     * @param currentPlayer
+     */
     const saveCurrentPlayer = (currentPlayer: PlayerScoreType | null) => {
         if (!currentPlayer) {
             localStorage.removeItem("currentPlayer");
@@ -52,6 +76,10 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
+    /**
+     * Get the current player from the local storage
+     * @returns current player
+     */
     const getCurrentPlayer = (): PlayerScoreType | null => {
         const currentPlayer = localStorage.getItem("currentPlayer");
         if (currentPlayer) {
@@ -60,10 +88,18 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         return null;
     }
 
+    /**
+     * Save the last shots in the local storage
+     * @param shots
+     */
     const saveLastShots = (shots: Shot[]): void => {
         localStorage.setItem("lastShots", JSON.stringify(shots));
     }
 
+    /**
+     * Get the last shots from the local storage
+     * @returns last shots
+     */
     const getLastShots = (): Shot[] | null => {
         const lastShots = localStorage.getItem("lastShots");
         if (lastShots) {
@@ -72,15 +108,10 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         return null;
     }
 
-    const getLastShotsOfPlayer = (player: "X" | "O"): Shot[] => {
-        const lastShots = getLastShots();
-        if (lastShots) {
-            return lastShots.filter((shot: Shot) => shot.type === player);
-        } else {
-            return [];
-        }
-    }
-
+    /**
+     * Get the leaderboard from the local storage
+     * @returns leaderboard
+     */
     const getLeaderboard = (): PlayerLeaderboardType[] => {
         const scores = localStorage.getItem("scores");
         if (scores) {
@@ -116,7 +147,6 @@ export const PersistanceProvider = ({ children }: { children: ReactNode }) => {
         saveCurrentPlayer,
         saveLastShots,
         getLastShots,
-        getLastShotsOfPlayer,
         getLeaderboard
     };
 
