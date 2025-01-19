@@ -1,8 +1,9 @@
 import {RotateCwIcon} from "lucide-react";
 import Button from "../Button.tsx";
 import {useGame} from "../../hooks/useGame.ts";
+import {memo} from "react";
 
-const ResetBoardButton = () => {
+const ResetBoardButton = memo(() => {
     const { resetAndSave } = useGame();
 
     return (
@@ -10,6 +11,6 @@ const ResetBoardButton = () => {
             <RotateCwIcon strokeWidth={3} />
         </Button>
     );
-};
+});
 
 export default ResetBoardButton;

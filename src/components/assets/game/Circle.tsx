@@ -1,11 +1,12 @@
 import {COLOR_FILL} from "../../../constants/colors.ts";
+import {memo} from "react";
 
 type Props = {
     color?: "primary" | "secondary" | "greyLight" | "greyDark";
     className?: string;
 }
 
-const Circle = ({ color = "secondary", className="" }: Props) => {
+const Circle = memo(({ color = "secondary", className="" }: Props) => {
     return (
         <svg
             width="100%"
@@ -26,6 +27,6 @@ const Circle = ({ color = "secondary", className="" }: Props) => {
             />
         </svg>
     );
-};
+});
 
 export default Circle;
