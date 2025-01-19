@@ -24,7 +24,7 @@ export const GameProvider = ({children}: { children: ReactNode }) => {
     const lastShotsData: Shot[] | null = getLastShots();
 
     const [board, setBoard] = useState<BoardType>(getSavedBoard().length === 0 ? INITIAL_BOARD : getSavedBoard());
-    const [currentPlayer, setCurrentPlayer] = useState<PlayerType>(currentGame?.isXTurn ? "X" : "O");
+    const [currentPlayer, setCurrentPlayer] = useState<PlayerType>(currentGame ? (currentGame.isXTurn ? "X" : "O") : "X");
     const [winner, setWinner] = useState<WinnerType>("");
     const [isGameAgainstComputer, setIsGameAgainstComputer] = useState<boolean>(currentGame?.againstComputer ?? true);
     const [isGame3Shots, setIsGame3Shots] = useState<boolean>(currentGame?.isGame3Shots ?? true);
