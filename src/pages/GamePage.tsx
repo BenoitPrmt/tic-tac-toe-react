@@ -1,5 +1,5 @@
 import { useGame } from "../hooks/useGame";
-import GameComponent from "../components/game/Game.tsx";
+import GameComponent from "../components/game/GameComponent.tsx";
 import ScoreCell from "../components/game/score/ScoreCell.tsx";
 
 const GamePage = () => {

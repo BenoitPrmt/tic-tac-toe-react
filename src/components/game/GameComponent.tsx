@@ -1,22 +1,19 @@
 import { useGame } from "../../hooks/useGame";
 import PlayerTurn from "./player/PlayerTurn.tsx";
 import WinnerModal from "./winner/WinnerModal.tsx";
-import Button from "../Button.tsx";
-import {RotateCwIcon} from "lucide-react";
 import Logo from "../assets/Logo.tsx";
 import BoardComponent from "./board/Board.tsx";
+import ResetBoardButton from "./ResetBoardButton.tsx";
 
 const GameComponent = () => {
-    const { winner, resetAndSave } = useGame();
+    const { winner } = useGame();
 
     return (
         <>
             <div className="flex justify-center space-x-4 mb-10">
                 <Logo />
                 <PlayerTurn />
-                <Button color={"greyLight"}>
-                    <RotateCwIcon strokeWidth={3} onClick={() => resetAndSave()} />
-                </Button>
+                <ResetBoardButton />
             </div>
 
             <BoardComponent />

@@ -9,26 +9,31 @@ const Header = memo(() => {
 
     return (
         <header>
-            <nav className={"flex flex-row justify-between py-5 px-4"}>
+            <nav
+                className={"flex flex-row justify-between py-5 px-4"}
+                aria-label="Barre de navigation principale"
+            >
                 <div className="flex flex-row space-y-3">
-                    <Link to={"/"}>
-                        <Logo />
+                    <Link to={"/"} aria-label="Retour à l'accueil">
+                        <Logo/>
                     </Link>
                 </div>
-                <div className="flex flex-row space-x-3">
+                <ul className="flex flex-row space-x-3">
                     {hasGameLaunched() && (
-                        <Button color={"greyLight"}>
-                            <Link to={"/game"}>
-                                Partie en cours
+                        <li>
+                            <Link to="/game" aria-label="Reprendre la partie en cours">
+                                <Button color="greyLight">
+                                    Partie en cours
+                                </Button>
                             </Link>
-                        </Button>
+                        </li>
                     )}
-                    <Button color={"greyLight"}>
-                        <Link to={"/scoreboard"}>
-                            Classement
+                    <li>
+                        <Link to="/scoreboard" aria-label="Voir le classement">
+                            <Button color="greyLight">Classement</Button>
                         </Link>
-                    </Button>
-                </div>
+                    </li>
+                </ul>
             </nav>
         </header>
     );

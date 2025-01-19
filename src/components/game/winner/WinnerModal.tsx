@@ -58,7 +58,7 @@ const WinnerModal = ({title, visible, winner, onClose}: Props) => {
     }
 
     return (
-        <dialog ref={modalRef} id="my_modal_4" className="modal" onCancel={handleESC}>
+        <dialog ref={modalRef} id="my_modal_4" className="modal" onCancel={handleESC} role="dialog">
             <div className="modal-box w-[100vw] max-w-full rounded-none bg-grey-dark flex items-center flex-col">
                 <p className="py-4 text-grey-light font-bold">{title.toUpperCase()}</p>
                 <h3 className={`font-bold flex flex-row text-grey-light text-3xl justify-center ${WINNER_COLORS[winner]}`}>

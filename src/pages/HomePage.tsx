@@ -88,12 +88,20 @@ const HomePage = () => {
     return (
         <div>
             <div className="space-y-5 flex flex-col justify-center items-center">
-                <div className="">
+
+                <div className="mb-5 space-y-4">
+                    <h1 className="text-4xl font-bold text-center text-grey-light">Bienvenue sur le jeu du <span className={"text-secondary"}>morpion</span> !</h1>
+                    <p className="text-center text-grey-light">
+                        Pour lancez une partie, choisissez votre mode de jeu et votre adversaire !
+                    </p>
+                </div>
+
+                <div>
                     <Switch handleChecked={handleGameTypeChange} choiceOne={"Mode classique"}
                             choiceTwo={"Mode en 3 coups"}/>
                 </div>
 
-                <div className="">
+                <div>
                     <Switch handleChecked={handleGameModeChange} choiceOne={"Contre l'ordinateur"}
                             choiceTwo={"Multijoueur"}/>
                 </div>
