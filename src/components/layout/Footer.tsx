@@ -5,7 +5,7 @@ import {memo} from "react";
 
 const Footer = memo(() => {
     return (
-        <footer className={"flex flex-row justify-between py-5 px-4"}>
+        <footer className={"flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:justify-between py-5 px-4"}>
             <div className="flex flex-row space-y-3">
                 <Link to={"/"}>
                     <Logo />
