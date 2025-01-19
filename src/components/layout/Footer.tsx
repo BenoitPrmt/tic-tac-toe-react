@@ -12,13 +12,13 @@ const Footer = memo(() => {
                 </Link>
             </div>
             <div>
-                <p className={"text-grey-light"}>TicTacToe - Made by ❤️ by <a href="https://benoit.fun" target="_blank" className="text-secondary">Benoît Parmentier</a></p>
+                <p className={"text-grey-light"}>TicTacToe - Développé avec ❤️ par <a href="https://benoit.fun" target="_blank" className="text-secondary underline">Benoît Parmentier</a></p>
             </div>
             <div className="flex flex-row space-x-3">
-                <a href={"https://github.com/BenoitPrmt"} target="_blank" className="text-grey-light">
+                <a href={"https://github.com/BenoitPrmt"} target="_blank" className="text-grey-light" aria-label={"Mon profil Github"}>
                     <GithubIcon />
                 </a>
-                <a href={"https://linkedin.com/in/benoit-parmentier"} target="_blank" className="text-grey-light">
+                <a href={"https://linkedin.com/in/benoit-parmentier"} target="_blank" className="text-grey-light" aria-label={"Mon profil Linkedin"}>
                     <LinkedinIcon />
                 </a>
             </div>
