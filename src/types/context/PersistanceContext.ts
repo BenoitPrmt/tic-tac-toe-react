@@ -12,6 +12,5 @@ export interface PersistanceContextType {
     getCurrentPlayer: () => PlayerScoreType | null;
     saveLastShots: (shots: Shot[]) => void;
     getLastShots: () => Shot[] | null;
-    getLastShotsOfPlayer: (player: "X" | "O") => Shot[];
     getLeaderboard: () => PlayerLeaderboardType[];
 }

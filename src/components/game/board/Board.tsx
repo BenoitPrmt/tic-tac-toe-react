@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import BoardCell from "./BoardCell.tsx";
-import {PlayerCellType} from "../../../types/Board.ts";
+import {PlayerCellType} from "../../../types/Player.ts";
 import { useGame } from "../../../hooks/useGame.ts";
 
 const BoardComponent = () => {

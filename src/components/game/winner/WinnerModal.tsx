@@ -1,5 +1,5 @@
 import {SyntheticEvent, useEffect, useRef} from "react";
-import {WinnerType} from "../../../types/Board.ts";
+import {WinnerType} from "../../../types/Player.ts";
 import cross from "../../../assets/images/game/cross.svg";
 import circle from "../../../assets/images/game/circle.svg";
 import Button from "../../Button.tsx";

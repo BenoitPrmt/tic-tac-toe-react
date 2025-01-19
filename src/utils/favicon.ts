@@ -1,4 +1,4 @@
-import {PlayerType} from "../types/Board.ts";
+import {PlayerType} from "../types/Player.ts";
 
 export const changeFavicon = (type: PlayerType) => {
     let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
